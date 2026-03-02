@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Giving Platform - Safe by Design Altruism</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1392ec",
+                        "sage": "#86a697",
+                        "warm-gray": "#2a2d2e",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101a22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300">
+<div class="relative flex min-h-screen flex-col overflow-x-hidden">
+<!-- Navigation -->
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined">volunteer_activism</span>
+</div>
+<span class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">GivingPlatform</span>
+</div>
+<nav class="hidden md:flex items-center gap-10">
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">How it Works</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Safety</a>
+<a class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Browse</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden sm:block text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">Sign In</button>
+<button class="rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">
+                        Join the Community
+                    </button>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="relative overflow-hidden px-6 pt-24 pb-20 md:pt-32 md:pb-32">
+<div class="absolute top-0 left-1/2 -z-10 h-[600px] w-[800px] -translate-x-1/2 opacity-20 blur-[120px] bg-gradient-to-tr from-primary to-sage"></div>
+<div class="mx-auto max-w-4xl text-center">
+<div class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 mb-8">
+<span class="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-xs font-semibold uppercase tracking-wider text-primary">Safe by Design</span>
+</div>
+<h1 class="text-5xl font-extrabold leading-[1.1] tracking-tight text-slate-900 dark:text-slate-100 md:text-7xl">
+                        Record and share acts of giving as a <span class="text-primary">learning experience</span>.
+                    </h1>
+<p class="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-slate-600 dark:text-slate-400 md:text-xl">
+                        A social learning platform built on intentionality, not vanity metrics. 
+                        Understand the impact of your generosity without the noise of competition.
+                    </p>
+<div class="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+<button class="w-full sm:w-auto min-w-[200px] rounded-xl bg-primary px-8 py-4 text-base font-bold text-white shadow-xl shadow-primary/30 hover:translate-y-[-2px] transition-all">
+                            Join the Community
+                        </button>
+<button class="w-full sm:w-auto min-w-[200px] rounded-xl border border-slate-300 dark:border-slate-700 px-8 py-4 text-base font-bold text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                            Browse Public Posts
+                        </button>
+</div>
+</div>
+<!-- Abstract Hero Graphic -->
+<div class="mt-20 flex justify-center px-4">
+<div class="relative w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-warm-gray/50 shadow-2xl">
+<div class="aspect-video w-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center" data-alt="Abstract soft geometric patterns in sage and primary blue">
+<div class="grid grid-cols-3 gap-6 p-10 w-full opacity-40">
+<div class="h-40 rounded-xl bg-primary/20"></div>
+<div class="h-40 rounded-xl bg-sage/20"></div>
+<div class="h-40 rounded-xl bg-primary/20"></div>
+<div class="h-40 rounded-xl bg-sage/20 col-span-2"></div>
+<div class="h-40 rounded-xl bg-primary/20"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How it Works Section -->
+<section class="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-background-dark/50 py-24 px-6">
+<div class="mx-auto max-w-7xl">
+<div class="mb-16 max-w-2xl">
+<h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 md:text-4xl">How it Works</h2>
+<p class="mt-4 text-lg text-slate-600 dark:text-slate-400">Four pillars designed to foster a thoughtful giving experience and personal growth.</p>
+</div>
+<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+<!-- Pillar 1 -->
+<div class="group relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-warm-gray/30 p-8 hover:border-primary/50 transition-all">
+<div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined">auto_stories</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Learn</h3>
+<p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                                Access curated resources to understand the psychological and social impact of altruism on yourself and your community.
+                            </p>
+</div>
+<!-- Pillar 2 -->
+<div class="group relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-warm-gray/30 p-8 hover:border-primary/50 transition-all">
+<div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-sage/10 text-sage">
+<span class="material-symbols-outlined">edit_note</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Record</h3>
+<p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                                Log your daily contributions in a distraction-free space. Every act counts, whether big or small, private or shared.
+                            </p>
+</div>
+<!-- Pillar 3 -->
+<div class="group relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-warm-gray/30 p-8 hover:border-primary/50 transition-all">
+<div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Reflect</h3>
+<p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                                Write about your personal experience. Deepen your practice by documenting your emotional growth through giving.
+                            </p>
+</div>
+<!-- Pillar 4 -->
+<div class="group relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-warm-gray/30 p-8 hover:border-primary/50 transition-all">
+<div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-sage/10 text-sage">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Follow</h3>
+<p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                                Observe the journey of others for inspiration. A silent feed designed to encourage, not to trigger social anxiety.
+                            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Safe by Design Section -->
+<section class="py-24 px-6 bg-background-light dark:bg-background-dark">
+<div class="mx-auto max-w-7xl">
+<div class="grid items-center gap-16 lg:grid-cols-2">
+<div>
+<div class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary mb-6">
+<span class="material-symbols-outlined">security</span>
+</div>
+<h2 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Safe by Design</h2>
+<p class="mt-6 text-xl leading-relaxed text-slate-600 dark:text-slate-400">
+                                Traditional social media is built on dopamine loops and vanity metrics. We've removed them all to protect the integrity of your practice.
+                            </p>
+<ul class="mt-10 space-y-6">
+<li class="flex items-start gap-4">
+<div class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800">
+<span class="material-symbols-outlined text-sm">close</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-slate-100">No Likes or Hearts</h4>
+<p class="text-slate-600 dark:text-slate-400">Giving isn't about approval. We removed popularity scores to keep the focus on the act.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800">
+<span class="material-symbols-outlined text-sm">close</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-slate-100">No Public Comments</h4>
+<p class="text-slate-600 dark:text-slate-400">Zero pressure to perform. Reflection is internal, and browsing is a quiet, meditative experience.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800">
+<span class="material-symbols-outlined text-sm">close</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-slate-100">No Vanity Metrics</h4>
+<p class="text-slate-600 dark:text-slate-400">We don't display follower counts or streaks. Your journey is yours alone to track.</p>
+</div>
+</li>
+</ul>
+<button class="mt-10 inline-flex items-center gap-2 font-bold text-primary hover:underline">
+                                Read our Philosophical Manifesto <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="relative">
+<div class="aspect-square rounded-3xl bg-slate-100 dark:bg-warm-gray p-8 flex flex-col justify-center items-center text-center">
+<div class="w-full max-w-xs space-y-4 opacity-30 select-none pointer-events-none">
+<!-- Blurred representation of old social media clutter -->
+<div class="h-10 w-full bg-slate-300 dark:bg-slate-700 rounded blur-sm"></div>
+<div class="flex gap-4">
+<div class="h-6 w-12 bg-red-400/50 rounded-full blur-sm"></div>
+<div class="h-6 w-12 bg-blue-400/50 rounded-full blur-sm"></div>
+</div>
+<div class="h-32 w-full bg-slate-300 dark:bg-slate-700 rounded blur-sm"></div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="bg-white dark:bg-background-dark border border-primary/30 p-8 rounded-2xl shadow-2xl max-w-sm">
+<span class="material-symbols-outlined text-primary text-5xl mb-4">do_not_disturb_on</span>
+<h4 class="text-xl font-bold mb-2">Zero Distractions</h4>
+<p class="text-sm text-slate-500">A clean interface that honors your time and mental health.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Latest Acts Preview -->
+<section class="py-24 px-6 bg-slate-50 dark:bg-background-dark/30">
+<div class="mx-auto max-w-7xl">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+<div class="max-w-2xl">
+<h2 class="text-3xl font-bold text-slate-900 dark:text-slate-100">Latest Acts of Giving</h2>
+<p class="mt-4 text-slate-600 dark:text-slate-400">Real stories from our community members shared with the intent to inspire.</p>
+</div>
+<a class="text-primary font-bold hover:underline" href="#">View Public Feed</a>
+</div>
+<div class="grid gap-6 md:grid-cols-3">
+<div class="glass-panel p-6 rounded-2xl">
+<div class="flex items-center gap-3 mb-4">
+<div class="h-8 w-8 rounded-full bg-sage/40" data-alt="User avatar placeholder"></div>
+<span class="text-xs font-semibold text-slate-500">2 hours ago</span>
+</div>
+<p class="text-slate-700 dark:text-slate-300 leading-relaxed italic">
+                                "Today I spent an hour helping a neighbor fix their fence. It wasn't about the work, but the conversation we had while doing it. I felt more connected to my street than I have in years."
+                            </p>
+</div>
+<div class="glass-panel p-6 rounded-2xl">
+<div class="flex items-center gap-3 mb-4">
+<div class="h-8 w-8 rounded-full bg-primary/40" data-alt="User avatar placeholder"></div>
+<span class="text-xs font-semibold text-slate-500">5 hours ago</span>
+</div>
+<p class="text-slate-700 dark:text-slate-300 leading-relaxed italic">
+                                "Anonymously paid for the coffee of the person behind me. It's a small gesture, but the feeling of quiet contribution is something I'm learning to value over public recognition."
+                            </p>
+</div>
+<div class="glass-panel p-6 rounded-2xl">
+<div class="flex items-center gap-3 mb-4">
+<div class="h-8 w-8 rounded-full bg-slate-400/40" data-alt="User avatar placeholder"></div>
+<span class="text-xs font-semibold text-slate-500">Yesterday</span>
+</div>
+<p class="text-slate-700 dark:text-slate-300 leading-relaxed italic">
+                                "Donated my old textbooks to the local library. Seeing them on the shelf for others to use for free made me realize how much knowledge we hoard that could be shared."
+                            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="py-24 px-6 text-center">
+<div class="mx-auto max-w-3xl">
+<h2 class="text-4xl font-extrabold text-slate-900 dark:text-slate-100">Ready to start your journey?</h2>
+<p class="mt-6 text-lg text-slate-600 dark:text-slate-400">Join a community of thousands who are redefining what it means to give in the digital age.</p>
+<div class="mt-10">
+<button class="rounded-xl bg-primary px-10 py-5 text-lg font-bold text-white shadow-2xl shadow-primary/40 hover:scale-105 transition-transform">
+                            Create Free Account
+                        </button>
+</div>
+<p class="mt-6 text-sm text-slate-500">No credit card required. Private by default.</p>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="border-t border-slate-200 dark:border-slate-800 py-12 px-6 bg-white dark:bg-background-dark">
+<div class="mx-auto max-w-7xl flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-sm">volunteer_activism</span>
+</div>
+<span class="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">GivingPlatform</span>
+</div>
+<div class="flex gap-8 text-sm font-medium text-slate-500 dark:text-slate-400">
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Contact Us</a>
+</div>
+<div class="text-sm text-slate-500 dark:text-slate-500">
+                    © 2024 GivingPlatform. All rights reserved.
+                </div>
+</div>
+</footer>
+</div>
+</body></html>

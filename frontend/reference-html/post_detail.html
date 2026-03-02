@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Giving Post Detailed View - Social Learning Platform</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1392ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101a22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .prose-custom {
+            line-height: 1.75;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex h-16 items-center justify-between gap-8">
+<!-- Logo & Nav -->
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">volunteer_activism</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight hidden md:block">GivingCircle</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Feed</a>
+<a class="text-sm font-medium hover:text-primary transition-colors text-primary" href="#">Communities</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Impact</a>
+</nav>
+</div>
+<!-- Search & Profile -->
+<div class="flex flex-1 items-center justify-end gap-4">
+<div class="relative w-full max-w-xs hidden sm:block">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+<span class="material-symbols-outlined text-sm">search</span>
+</span>
+<input class="block w-full rounded-lg border-0 bg-slate-100 dark:bg-slate-800 py-1.5 pl-10 pr-3 text-sm focus:ring-2 focus:ring-primary placeholder:text-slate-500" placeholder="Search insights..." type="text"/>
+</div>
+<button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 bg-cover bg-center" data-alt="User profile avatar of a smiling person" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAlJzs5GPQBFeDUXdah_QeJidNTvYOJ6bJDsa17sqMQIYpuZ5-iNFIGIjAg0JArhUW-ppTM9kCZsYGGn7T9Y7oM98RHCwJSWGNyX9_tghD9E46dNCDXqtk8bLYABQGUusgE9vMj-zPTo84QS4omhL_5l9jq86g0gp7YqL41cnH_XUZAjd4JlvuaqKSRGnNuje3ZbJPHuKy7jlFoqlm4CEB6yCT4d7UIKP_5e2SRkJ9fQj2Il0ZdcH9cvi-5SEBa9vS6Syl6DYQ0Iywl')"></div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+<!-- Breadcrumbs & Back -->
+<div class="flex items-center gap-2 text-sm text-slate-500 mb-8">
+<a class="hover:text-primary transition-colors" href="#">Home</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Stories</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">Post Details</span>
+</div>
+<!-- Post Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10 pb-8 border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-full ring-2 ring-primary ring-offset-4 ring-offset-background-light dark:ring-offset-background-dark bg-cover bg-center" data-alt="Author profile picture of Alex Rivers" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCXnDkGuBRvxuXApsVcq15ZYvhf4QIQEZfEyxCH1Q-xYA0v6NMb0Ef-N-CqjoxbEtJYO_Sr-Qw8N2fPfnSrDp-GsklOdAikEREyxCYARyzlTcSW6Mwo29z3jq-ZrUhQ4KKoIuX357dJ5VHr44ZFeF2ziXm7bEJJ2etmGx85Ow3y42SU3BdhMXm7AfztNzihRumJeyTYLL_2fdGw-0evkYNPNcu3ps_9mGxhYkLPjtECTTVRi8-ZTfY2Qnl_peaV9XGmjPzM0O4aPqgy')"></div>
+<div>
+<h3 class="text-xl font-bold">Alex Rivers</h3>
+<p class="text-slate-500 text-sm">Published Oct 24, 2023 • 5 min read</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg transition-all transform active:scale-95">
+                    Follow
+                </button>
+<button class="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">bookmark</span>
+</button>
+</div>
+</div>
+<!-- Post Content Body -->
+<article class="prose-custom">
+<!-- Large Title: The Act of Giving -->
+<h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-8 leading-[1.15]">
+                Organizing a community fridge for the winter season
+            </h1>
+<div class="space-y-12 text-lg">
+<!-- Section: The Situation -->
+<section>
+<h2 class="text-primary text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">info</span> The Situation
+                    </h2>
+<p class="text-slate-700 dark:text-slate-300">
+                        In my local neighborhood, I noticed a growing gap between the surplus of fresh food from local grocers and the increasing number of families struggling with food insecurity as temperatures dropped. The existing food bank was only open on Tuesday mornings, leaving a massive gap for those working multiple jobs or facing immediate crises.
+                    </p>
+</section>
+<!-- Section: Hesitation & Conflict -->
+<section class="p-6 rounded-xl bg-primary/5 border-l-4 border-primary italic text-slate-700 dark:text-slate-300">
+<h2 class="not-italic text-slate-900 dark:text-slate-100 text-sm font-bold mb-3">Hesitation &amp; Conflict</h2>
+                    "I spent weeks wondering if I was the right person to lead this. I feared that setting up a public fridge might lead to health code violations, or worse, that local authorities would shut it down immediately, wasting the time and resources of others who might contribute. I worried about the logistics of daily cleaning—could I really commit to this every single day?"
+                </section>
+<!-- Section: Specific Strategies -->
+<section>
+<h2 class="text-primary text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">tactic</span> Specific Strategies
+                    </h2>
+<ul class="grid gap-4 list-none p-0">
+<li class="flex items-start gap-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
+<span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+<div>
+<span class="font-bold block mb-1">Bureaucracy Navigation</span>
+<p class="text-base text-slate-600 dark:text-slate-400">Reached out to the local city council representative first to explain the 'Good Samaritan' law protection for food donations.</p>
+</div>
+</li>
+<li class="flex items-start gap-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
+<span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+<div>
+<span class="font-bold block mb-1">Host Partnership</span>
+<p class="text-base text-slate-600 dark:text-slate-400">Secured an outdoor electrical outlet from a local bookstore that agreed to host the fridge in exchange for help with their winter snow removal.</p>
+</div>
+</li>
+<li class="flex items-start gap-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
+<span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+<div>
+<span class="font-bold block mb-1">Volunteer Rotation</span>
+<p class="text-base text-slate-600 dark:text-slate-400">Built a WhatsApp group of 12 neighbors to rotate cleaning duties, ensuring no single person had more than 30 minutes of work per week.</p>
+</div>
+</li>
+</ul>
+</section>
+<!-- Section: Outcome/Change -->
+<section>
+<h2 class="text-primary text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">trending_up</span> Outcome &amp; Change
+                    </h2>
+<p class="text-slate-700 dark:text-slate-300">
+                        The fridge has been operational for 4 months. On average, it provides over 200 pounds of fresh produce and prepared meals to the community weekly. Beyond the food, it has become a focal point for neighborhood interaction; people leave notes, share recipes, and look out for one another in ways we hadn't seen before.
+                    </p>
+</section>
+<!-- Section: Lessons for Next Time -->
+<section class="bg-slate-900 dark:bg-slate-800 text-white p-8 rounded-2xl shadow-xl">
+<h2 class="text-primary text-sm font-bold mb-4">Lessons for Next Time</h2>
+<p class="text-slate-300 mb-0">
+                        If I were to start over, I would invest in a high-quality outdoor-rated enclosure from day one. We had a minor issue with condensation freezing the door shut during the first blizzard. Also, don't underestimate the power of clear signage in multiple languages—it makes the 'safe by design' principle truly inclusive.
+                    </p>
+</section>
+</div>
+</article>
+<!-- Footer Discovery -->
+<footer class="mt-20 pt-12 border-t border-slate-200 dark:border-slate-800">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
+<div>
+<h4 class="text-lg font-bold mb-1">Explore similar tags</h4>
+<p class="text-sm text-slate-500">Find more stories that inspire community action.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-lg">share</span> Share
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-primary">
+<span class="material-symbols-outlined text-lg">bookmark</span> Save Insight
+                    </button>
+</div>
+</div>
+<div class="flex flex-wrap gap-2">
+<a class="px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/20 hover:text-primary transition-all text-sm font-medium" href="#">#CommunityAction</a>
+<a class="px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/20 hover:text-primary transition-all text-sm font-medium" href="#">#FoodInsecurity</a>
+<a class="px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/20 hover:text-primary transition-all text-sm font-medium" href="#">#WinterSupport</a>
+<a class="px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/20 hover:text-primary transition-all text-sm font-medium" href="#">#MutualAid</a>
+<a class="px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/20 hover:text-primary transition-all text-sm font-medium" href="#">#LocalLeadership</a>
+</div>
+</footer>
+<!-- Bottom Spacing -->
+<div class="h-24"></div>
+</main>
+</body></html>

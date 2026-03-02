@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Following Feed Dashboard | Social Learning</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1392ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101a22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .active-tab {
+            border-bottom: 3px solid #1392ec;
+            color: #1392ec;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<!-- Logo & Brand -->
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined text-2xl">diversity_3</span>
+</div>
+<span class="text-xl font-bold tracking-tight hidden md:block">Social Learning</span>
+</div>
+<!-- Tabs -->
+<nav class="flex h-16 gap-8">
+<a class="inline-flex items-center px-1 pt-1 text-sm font-semibold active-tab transition-colors" href="#">
+                        Following
+                    </a>
+<a class="inline-flex items-center px-1 pt-1 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">
+                        Latest
+                    </a>
+</nav>
+<!-- Search & Actions -->
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+<span class="material-symbols-outlined text-sm">search</span>
+</span>
+<input class="block w-64 pl-10 pr-3 py-2 border-none rounded-lg bg-slate-100 dark:bg-slate-800 focus:ring-2 focus:ring-primary text-sm" placeholder="Search insights..." type="text"/>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+<span>Create Post</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar showing a smiling person" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7TZZKaohfw8s9TO7WN8N1yQLGqnhYPqzJZ7JWkNxcaWmuWwNTMZtuiJd6pEfLyoHgE_w0OdFi5MhR4T-V1_i0F6RnjRtBYZineS2RtM8ZV8iRGo3rvjLr_zYizvl4EyYYV1YklSsw63tShBRZMVjFFihY939sw040YPTt9TqXTTSaHjAfPc30UQAu66cf9llzALGS8FUtFw1lL4ySOxPKmvnl0iUDGzfJK87QODK5lTYNS_44UOIfGYKrTzTdiar0UKm6BSWAeyS_"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Sidebar (Learning Tips) -->
+<aside class="hidden lg:block lg:col-span-3 space-y-6">
+<div class="sticky top-24">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">lightbulb</span>
+<h3 class="font-bold text-lg">Learning Tips</h3>
+</div>
+<div class="space-y-4">
+<!-- Tip Card 1 -->
+<div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+<h4 class="font-semibold text-primary text-sm mb-2">Safe by Design</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                When sharing an act of giving, avoid sharing specific locations or PII to protect recipients.
+                            </p>
+</div>
+<!-- Tip Card 2 -->
+<div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+<h4 class="font-semibold text-primary text-sm mb-2">Measuring Outcome</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Focus on the *change* created rather than the *effort* spent. Positive impact is a journey!
+                            </p>
+</div>
+<!-- Sidebar Footer Links -->
+<div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+<a class="text-xs text-slate-400 hover:text-primary flex items-center gap-1" href="#">
+                                View all safe giving guidelines
+                                <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Feed -->
+<section class="lg:col-span-6 space-y-6">
+<!-- Post Card 1 -->
+<article class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+<div class="p-5">
+<!-- Author Info -->
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Female author profile picture in professional setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0ULDna8lGiKCR_AVyX3k8Qd2AM0XGOC0fM5wt2l9az0-kXTzxmHt7lTVsOZrIVRMGXgr_7_lpVqtiMJuy0itwaIP8g5ps-n7r0lYwvytyBAS9PnWUlZ5w7R_B8kGfFEie4SjJOcH-CK2XlZkGPeFZ0R7FQlfnTnnOc75d3jFXiQc7DN7MiIS_DKR3oTHZ9USN6GeS4U3z9Y50spGRiTH5xUTOq36JotSH-FGIYmsiPQuTv5zN-Z8PTgKqM-lBevl8eWpEUZvLqbUv"/>
+<div>
+<h4 class="font-bold text-sm">Elena Rodriguez</h4>
+<p class="text-xs text-slate-400">Education Mentor • 2h ago</p>
+</div>
+</div>
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<!-- Content -->
+<div class="space-y-3">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">
+                                Establishing a "No-Book-Left-Behind" Community Library
+                            </h3>
+<div class="space-y-2">
+<div class="flex gap-2">
+<span class="text-xs font-bold uppercase tracking-wider text-slate-400 shrink-0 mt-0.5">Action:</span>
+<p class="text-sm text-slate-600 dark:text-slate-300">Organized a mobile library for local low-income housing units using donated weatherproof bins.</p>
+</div>
+<div class="bg-primary/10 dark:bg-primary/5 border-l-4 border-primary p-3 rounded-r-lg">
+<div class="flex gap-2">
+<span class="text-xs font-bold uppercase tracking-wider text-primary shrink-0 mt-0.5">Outcome:</span>
+<p class="text-sm font-medium text-slate-800 dark:text-slate-200">Distributed 400+ books; 15 families started weekly reading circles.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Tags & Actions -->
+<div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<div class="flex gap-2">
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-semibold text-slate-500 dark:text-slate-400">#Education</span>
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-semibold text-slate-500 dark:text-slate-400">#Community</span>
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-semibold text-slate-500 dark:text-slate-400">#Sustainability</span>
+</div>
+<button class="flex items-center gap-2 text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors border border-primary/20">
+<span class="material-symbols-outlined text-xl">bookmark</span>
+<span class="text-xs font-bold">Bookmark</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Post Card 2 (Image version) -->
+<article class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+<img class="w-full h-48 object-cover" data-alt="Community garden with volunteers planting seeds" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6NBdVP5IYvFWHz9mEh5CYK8TSxy44JoHYi63tLhHkSJt25n9BCh2OOmBykCIbZpqPEvniZdiH_mXSW9P4jegs566Rvco6FkJ30EEyoJmRdJMnOR5dUoy7vaayURj3xBywUYGBntZs5kZyOOa5l-Yj4qj73rFwMIPgIxVnISWMtA3HNUCaRvXX-w5bC72ryF2Jpbht4nJalyW5e7b4IV2g1sfYl_nYt1cQLoIqcoqaceXZMmssY-W7nIUSBZO-AWWKbgB6oGqZ2gxZ"/>
+<div class="p-5">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Male author avatar with professional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4zUGE9rIbeVeuIkkNdqEGMHAjbowV2-5sSdg1iJqjLQ2oKoTRNo2M9lXDbOW6OdL0EmYC2e8E_icL9I0u_Tb0I8YvKADxiJMGX5PHhXM5CKnx764kHGK4ZGXxCeVuBwqgGYFjAuOUALHrxsTUc9xs70Acu1-iY0WhhqpwiVxQtLSllL1Ok13x3JjFH4YAigHIw-neUYuZ2vu04tr4Fyx5IXjh-dLLtWyZVpy2O_4wWIuEJFh23wCchTDj1xG2U34uGvuoCfZaQmEa"/>
+<div>
+<h4 class="font-bold text-sm">Marcus Chen</h4>
+<p class="text-xs text-slate-400">Environmental Advocate • 5h ago</p>
+</div>
+</div>
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="space-y-3">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">
+                                Zero-Waste Neighborhood Initiative
+                            </h3>
+<div class="space-y-2">
+<div class="flex gap-2">
+<span class="text-xs font-bold uppercase tracking-wider text-slate-400 shrink-0 mt-0.5">Action:</span>
+<p class="text-sm text-slate-600 dark:text-slate-300">Facilitated a composting workshop and provided starter kits to 10 households.</p>
+</div>
+<div class="bg-primary/10 dark:bg-primary/5 border-l-4 border-primary p-3 rounded-r-lg">
+<div class="flex gap-2">
+<span class="text-xs font-bold uppercase tracking-wider text-primary shrink-0 mt-0.5">Outcome:</span>
+<p class="text-sm font-medium text-slate-800 dark:text-slate-200">Reduced landfill waste by an estimated 20kg per week across participating homes.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<div class="flex gap-2">
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-semibold text-slate-500 dark:text-slate-400">#Environment</span>
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-semibold text-slate-500 dark:text-slate-400">#Workshops</span>
+</div>
+<button class="flex items-center gap-2 text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors border border-primary/20">
+<span class="material-symbols-outlined text-xl">bookmark</span>
+<span class="text-xs font-bold">Bookmark</span>
+</button>
+</div>
+</div>
+</article>
+</section>
+<!-- Right Sidebar (Trending/Community stats) -->
+<aside class="hidden xl:block xl:col-span-3 space-y-6">
+<div class="sticky top-24">
+<div class="bg-gradient-to-br from-primary to-blue-600 p-6 rounded-2xl text-white shadow-xl shadow-primary/10 mb-6">
+<h3 class="text-lg font-bold mb-2">Impact Score</h3>
+<div class="flex items-end gap-2">
+<span class="text-4xl font-bold tracking-tight">2,480</span>
+<span class="text-sm font-medium opacity-80 mb-1">pts</span>
+</div>
+<p class="text-xs mt-3 opacity-90 leading-relaxed">
+                            Your contributions have inspired 12 people this week. Keep spreading safe acts of giving!
+                        </p>
+<button class="w-full mt-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm py-2 rounded-lg text-sm font-bold transition-colors">
+                            View Impact Analytics
+                        </button>
+</div>
+<div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+<h3 class="font-bold text-sm mb-4">Suggested to Follow</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800">
+<img class="w-full h-full rounded-full object-cover" data-alt="Male profile picture for follow suggestion" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUcROocRgLz5u9McabWe7eymp8UcichE2fHxq_fTXHkkg1i1ON0NFHt_EMqFO7dEnnRAWDBDmRx1qUie5J3tM6-RquyGUZsByMEpRFpUSCzYmudWozdH3WB-V3GIe9Zt7LeqTdS-9_30rjbFTGIsAB2Lz-wm2fEhwiYbBcmqw3pD5vbK0QmI0jEbF8a2xBQE1W5VyXCdARcjV5_l3GDZbRe4RMhx6HwNn3OTZ5HKskCUj2z9ofVHJAMRkm-i4q07TU9qCvv6JT26ZI"/>
+</div>
+<span class="text-xs font-semibold">David K.</span>
+</div>
+<button class="text-[10px] font-bold text-primary hover:underline">Follow</button>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800">
+<img class="w-full h-full rounded-full object-cover" data-alt="Female profile picture for follow suggestion" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACdytqBDxu3gGWOebUOdFkCxBkH-o26ajKAUJ1kEr8vCEGjFbR7mSM08uf1Bymn_-jgXxrEr9z1OenvgjwRs1A9j1gjTcA2ER4mxA0RxCcf-zfXF1_-f8gPgNgvbYfmPK6UM8A86D72DudBw7JgxZofHvvY3sH4lnq9apr7DLiyJ3Vf2l5nFGAuKLS44sR4v7HZ9t5WUp-HDSz44sZJSE3ru2vcAnoMlVSjKYn9G11MbtQ-GnLSINl4ldrsBSmQsHwzvBypQQ6f7pq"/>
+</div>
+<span class="text-xs font-semibold">Sarah W.</span>
+</div>
+<button class="text-[10px] font-bold text-primary hover:underline">Follow</button>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Floating Create Post (Mobile/Tablet Visibility) -->
+<div class="fixed bottom-6 right-6 lg:hidden">
+<button class="w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+</body></html>

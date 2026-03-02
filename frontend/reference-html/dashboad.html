@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Personal Reflection &amp; Trends | Alex's Journey</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1392ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101a22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #325167;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex flex-col justify-between p-4">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border border-primary/30">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="User avatar for Alex" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnkVxkQjRJQWeFPw20X5Qgyr2DDBKPsUN3Eoy9MiZ41AVp0yYY2iP9xmLrt7EVxAii8057A3CEP3GloutCTy728EI75rLvGk6we9Aen12oI86M_sEPpZgVxq0G0gmqN_t7pOMzF_FNRk6Eihkn_XpaoBTE8inJTJK5EuxsO7NV0gccyWYoTApdXbdRPtR7QCB8PCzKLx7kcNXoqK-6DxdYab6u_DoG3uPSrFh9H2kLQGa4HZkidyId3ixvzGjSyOR3gOfqxKLis8Yl"/>
+</div>
+<div class="flex flex-col">
+<h1 class="text-sm font-bold truncate">Alex's Journey</h1>
+<span class="text-[10px] uppercase tracking-wider text-primary font-semibold">Safe by Design</span>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">history_edu</span>
+<span class="text-sm font-medium">Reflections</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary border border-primary/20" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="text-sm font-medium">Trends</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-sm font-medium">Community</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mt-4" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white rounded-lg py-2.5 px-4 flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span class="text-sm font-bold">New Reflection</span>
+</button>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto custom-scrollbar bg-background-light dark:bg-background-dark p-6 lg:p-10">
+<div class="max-w-6xl mx-auto space-y-10">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+<span class="text-xs font-bold uppercase tracking-widest">Private Insights View</span>
+</div>
+<h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Personal Reflection &amp; Trends</h2>
+<p class="text-slate-500 dark:text-slate-400 max-w-xl">Explore the patterns of your impact and your personal growth journey through "Safe by Design" giving.</p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                            Export Data
+                        </button>
+</div>
+</header>
+<!-- Top Stats Grid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[120px]">
+<span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">Total Acts</span>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black">128</span>
+<span class="text-xs font-medium text-emerald-500">+12%</span>
+</div>
+<div class="w-full h-1 bg-slate-100 dark:bg-slate-700 rounded-full mt-2">
+<div class="bg-primary h-full rounded-full w-[65%]"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[120px]">
+<span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">Current Streak</span>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black">12 days</span>
+<span class="text-xs font-medium text-emerald-500">+4d</span>
+</div>
+<div class="flex gap-1 mt-2">
+<div class="h-1 flex-1 bg-primary rounded-full"></div>
+<div class="h-1 flex-1 bg-primary rounded-full"></div>
+<div class="h-1 flex-1 bg-primary rounded-full"></div>
+<div class="h-1 flex-1 bg-slate-100 dark:bg-slate-700 rounded-full"></div>
+<div class="h-1 flex-1 bg-slate-100 dark:bg-slate-700 rounded-full"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[120px]">
+<span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">Growth Milestone</span>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black">Level 4</span>
+<span class="text-xs font-medium text-primary">Pro-Active</span>
+</div>
+<div class="text-[10px] text-slate-400 mt-2 italic">80xp until Level 5</div>
+</div>
+<div class="bg-white dark:bg-slate-800/50 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[120px]">
+<span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">Trust Score</span>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black">98.2</span>
+<span class="text-xs font-medium text-primary">Top 1%</span>
+</div>
+<div class="flex items-center gap-1 mt-2">
+<span class="material-symbols-outlined text-[14px] text-amber-400 fill-current">stars</span>
+<span class="text-[10px] text-slate-400">Verified Giver Status</span>
+</div>
+</div>
+</section>
+<!-- Trends and Analysis Section -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Visualization: Tags -->
+<div class="bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg font-bold">Commonly Used Tags</h3>
+<select class="text-xs bg-transparent border-none focus:ring-0 text-slate-500 cursor-pointer uppercase font-bold tracking-wider">
+<option>Last 30 Days</option>
+<option>Last 90 Days</option>
+</select>
+</div>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-primary text-white rounded-full text-xs font-bold">#mentorship</span>
+<span class="px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-bold">#physical-aid</span>
+<span class="px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-bold">#advice</span>
+<span class="px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-bold">#community</span>
+<span class="px-3 py-1 bg-primary/10 text-primary/60 rounded-full text-xs font-bold">#career</span>
+</div>
+<div class="flex items-end gap-3 h-48 px-2">
+<div class="flex-1 bg-primary/10 hover:bg-primary/20 transition-colors rounded-t-lg relative group h-[40%]">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 text-[10px] font-bold">12</div>
+</div>
+<div class="flex-1 bg-primary hover:bg-primary/80 transition-colors rounded-t-lg relative group h-[90%]">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 text-[10px] font-bold">28</div>
+</div>
+<div class="flex-1 bg-primary/40 hover:bg-primary/50 transition-colors rounded-t-lg relative group h-[60%]">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 text-[10px] font-bold">18</div>
+</div>
+<div class="flex-1 bg-primary/60 hover:bg-primary/70 transition-colors rounded-t-lg relative group h-[75%]">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 text-[10px] font-bold">22</div>
+</div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/30 transition-colors rounded-t-lg relative group h-[30%]">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 text-[10px] font-bold">8</div>
+</div>
+</div>
+<div class="flex justify-between mt-2 px-2">
+<span class="text-[10px] text-slate-500 font-bold uppercase w-0 overflow-visible whitespace-nowrap -rotate-45 translate-y-4">Mentorship</span>
+<span class="text-[10px] text-slate-500 font-bold uppercase w-0 overflow-visible whitespace-nowrap -rotate-45 translate-y-4">Physical Aid</span>
+<span class="text-[10px] text-slate-500 font-bold uppercase w-0 overflow-visible whitespace-nowrap -rotate-45 translate-y-4">Advice</span>
+<span class="text-[10px] text-slate-500 font-bold uppercase w-0 overflow-visible whitespace-nowrap -rotate-45 translate-y-4">Community</span>
+<span class="text-[10px] text-slate-500 font-bold uppercase w-0 overflow-visible whitespace-nowrap -rotate-45 translate-y-4">Career</span>
+</div>
+</div>
+<!-- Analysis: Cognitive Shift -->
+<div class="bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg font-bold">Giving Pattern Analysis</h3>
+<span class="material-symbols-outlined text-primary">auto_graph</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-8 italic">Your most frequent psychological progression this month:</p>
+<div class="flex-1 flex flex-col justify-center gap-6 relative">
+<!-- Visual path -->
+<div class="absolute left-6 top-8 bottom-8 w-0.5 border-l-2 border-dashed border-primary/30"></div>
+<!-- Pattern steps -->
+<div class="relative flex items-center gap-6 group">
+<div class="size-12 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center z-10 group-hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">psychology</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold uppercase tracking-widest text-slate-500">Phase 1</span>
+<h4 class="text-xl font-extrabold">Hesitation</h4>
+<p class="text-xs text-slate-400">Common trigger: Lack of clear strategy</p>
+</div>
+</div>
+<div class="relative flex items-center gap-6 group">
+<div class="size-12 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-primary">architecture</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold uppercase tracking-widest text-primary">Phase 2</span>
+<h4 class="text-xl font-extrabold">Strategy</h4>
+<p class="text-xs text-slate-400">Using the "Safe by Design" framework</p>
+</div>
+</div>
+<div class="relative flex items-center gap-6 group">
+<div class="size-12 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-emerald-500">change_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold uppercase tracking-widest text-emerald-500">Phase 3</span>
+<h4 class="text-xl font-extrabold">Impactful Change</h4>
+<p class="text-xs text-slate-400">Result: Sustainable outcome achieved</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Post History Section -->
+<section class="space-y-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<h3 class="text-2xl font-black flex items-center gap-2">
+<span class="material-symbols-outlined">calendar_month</span>
+                            My Post History
+                        </h3>
+<div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+<button class="px-3 py-1.5 bg-white dark:bg-slate-700 text-xs font-bold rounded-md shadow-sm">Timeline</button>
+<button class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">Calendar View</button>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Post Entry 1 -->
+<div class="bg-white dark:bg-slate-800/30 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden hover:border-primary/50 transition-colors group">
+<div class="flex">
+<div class="w-1 bg-primary/50 group-hover:bg-primary transition-colors"></div>
+<div class="flex-1 p-5">
+<div class="flex flex-col md:flex-row justify-between gap-2 mb-3">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Nov 14, 2023</span>
+<div class="flex gap-1">
+<span class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-black uppercase rounded">#mentorship</span>
+<span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 text-[10px] font-black uppercase rounded">#career</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-slate-400">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span class="text-[10px] font-bold">Public (Hidden Details)</span>
+</div>
+<span class="material-symbols-outlined text-[18px] cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+<h4 class="text-lg font-bold mb-2">Guided a junior dev through their first architecture review.</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">I noticed they were hesitant to speak up during the meeting. I scheduled a 1:1 afterwards to walk through the points they wanted to make and built a strategy for the next session...</p>
+<div class="mt-4 flex items-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<div class="flex -space-x-2">
+<img class="size-6 rounded-full border-2 border-white dark:border-slate-800" data-alt="Recipient 1 avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY6CjxgDybZUZDLhnUmPQTnZCQFheSiEzDlKNmn_1ARKNee5hXbvKYvOHZL8xgPwxDToCKh-NyrFD3QXPyU7sIy7ay9PmaiehCyR2cfnZ1hbV1rvzsffQ2NNnbIBgShAfjPl9-4AZmgdp6RuA6Am4ViXhTjxEguBSm4WDIU3Q8hMi5zz4qCbgEepyY66SYSZHDeHcuEAwwAN7htQSRLaeQwe4ScCPXqQ4nAz1uglOxQ9ArXs4Xw_eRtTI-5IPxwrZGpECGpoFCGJrY"/>
+<img class="size-6 rounded-full border-2 border-white dark:border-slate-800" data-alt="Recipient 2 avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsslGWjrC2aBRg_Wt5l0xLteVsTkCU0BTU6_Y1RKajHmu7aA9D4PA440CC5E9nBVU21puAcPnys9pclCdbmoJ43-B46XPwoHkHlOSmRyRKewYaukbe7KNUY9NanCllvki742dcauG5r0xQ0bmTpeshVqRGbCAhhh6ZME5ONJcIdPR04aQ60lxoKB9JnaKIf5z-NyXtzSJp8OmoPsiq2wQhEL9Dvu-V-KSUlFt_BMaV78LbvII6OrBcGgWs7z0mFrk28Pzzz0j6PU1x"/>
+</div>
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Growth: +15 Mentor XP</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Post Entry 2 -->
+<div class="bg-white dark:bg-slate-800/30 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden hover:border-primary/50 transition-colors group">
+<div class="flex">
+<div class="w-1 bg-amber-500/50 group-hover:bg-amber-500 transition-colors"></div>
+<div class="flex-1 p-5">
+<div class="flex flex-col md:flex-row justify-between gap-2 mb-3">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Nov 12, 2023</span>
+<div class="flex gap-1">
+<span class="px-2 py-0.5 bg-amber-500/10 text-amber-500 text-[10px] font-black uppercase rounded">#community</span>
+<span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 text-[10px] font-black uppercase rounded">#physical-aid</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-slate-400">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span class="text-[10px] font-bold">Private Reflection</span>
+</div>
+<span class="material-symbols-outlined text-[18px] cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+<h4 class="text-lg font-bold mb-2">Organized neighborhood tool-sharing workshop.</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">Felt some hesitation initially about people not returning items. Developed a digital log system (Strategy) which removed the anxiety and led to 5 successful shares today...</p>
+<div class="mt-4 flex items-center gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Growth: +22 Community XP</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Post Entry 3 -->
+<div class="bg-white dark:bg-slate-800/30 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden hover:border-primary/50 transition-colors group opacity-70">
+<div class="flex">
+<div class="w-1 bg-slate-300 dark:bg-slate-700"></div>
+<div class="flex-1 p-5">
+<div class="flex flex-col md:flex-row justify-between gap-2 mb-3">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">Nov 08, 2023</span>
+<div class="flex gap-1">
+<span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-500 text-[10px] font-black uppercase rounded">#advice</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-slate-400">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span class="text-[10px] font-bold">Public</span>
+</div>
+<span class="material-symbols-outlined text-[18px] cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+<h4 class="text-lg font-bold mb-2">Sharing resources for remote work ergonomics.</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">Sent a list of vetted gear to the new hires to ensure they have a safe setup from day one...</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex justify-center pt-6">
+<button class="flex items-center gap-2 text-sm font-bold text-primary hover:underline">
+                            Load More Reflections
+                            <span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+</section>
+</div>
+<!-- Footer -->
+<footer class="mt-20 py-10 border-t border-slate-200 dark:border-slate-800 text-center space-y-4">
+<div class="flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">verified_user</span>
+<span class="text-sm font-bold tracking-tight">Safe by Design Architecture</span>
+</div>
+<p class="text-[10px] text-slate-500 uppercase tracking-[0.2em]">Encrypted • Private • Decentralized</p>
+</footer>
+</main>
+</div>
+</body></html>
