@@ -6,9 +6,17 @@ app:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
   gcs:
     bucket: ${GCS_BUCKET:}
+    public-base: ${GCS_PUBLIC_BASE:}
     signed-url-duration-minutes: ${GCS_SIGNED_URL_DURATION_MINUTES:15}
+  post:
+    # Aフェーズの暫定値。将来は認証ユーザー(Firebase Auth)から authorId を解決する。
+    default-author-id: ${APP_POST_DEFAULT_AUTHOR_ID:00000000-0000-0000-0000-000000000001}
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: ${MULTIPART_MAX_FILE_SIZE:5MB}
+      max-request-size: ${MULTIPART_MAX_REQUEST_SIZE:20MB}
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/app}
     username: ${DB_USER:app}
@@ -16,9 +24,9 @@ spring:
   flyway:
     enabled: true
     # migrate用ユーザー（未設定なら datasource を使う）
-    url: ${FLYWAY_URL:${DB_URL}}
-    user: ${FLYWAY_USER:${DB_USER}}
-    password: ${FLYWAY_PASS:${DB_PASS}}
+    url: ${FLYWAY_URL:${DB_URL:jdbc:postgresql://localhost:5432/app}}
+    user: ${FLYWAY_USER:${DB_USER:app}}
+    password: ${FLYWAY_PASS:${DB_PASS:app}}
     # 初回からFlyway管理したいなら true が便利
     baseline-on-migrate: true
 
