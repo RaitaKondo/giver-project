@@ -16,6 +16,16 @@ CREATE TABLE IF NOT EXISTS posts (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+create table post_images (
+  id uuid primary key,
+  post_id uuid not null references posts(id) on delete cascade,
+  object_name text not null,
+  sort_order int not null default 0,
+  created_at timestamptz not null
+);
+
+create index idx_post_images_post_id on post_images(post_id);
+
 CREATE TABLE IF NOT EXISTS follows (
   follower_id UUID NOT NULL REFERENCES users(id),
   followee_id UUID NOT NULL REFERENCES users(id),
