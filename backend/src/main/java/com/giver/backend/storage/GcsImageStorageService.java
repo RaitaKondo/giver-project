@@ -6,6 +6,7 @@ import com.google.cloud.storage.Storage;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ public class GcsImageStorageService {
       Storage storage,
       @Value("${app.gcs.bucket}") String bucket
   ) {
+    // Objects.requireNonNull. 設定漏れや Bean 不備があれば起動時に早めに落ちます。つまり「null のまま実行して途中で壊れる」より前に検知したい、という意図です。
     this.storage = Objects.requireNonNull(storage);
     this.bucket = Objects.requireNonNull(bucket);
   }
@@ -48,7 +50,7 @@ public class GcsImageStorageService {
     if (filename == null || !filename.contains(".")) {
       return "";
     }
-    return filename.substring(filename.lastIndexOf('.')).toLowerCase();
+    return filename.substring(filename.lastIndexOf('.')).toLowerCase(Locale.ROOT);
   }
 
   public record StoredObject(String bucket, String objectName, String contentType) {}
