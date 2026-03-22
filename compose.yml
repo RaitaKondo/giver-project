@@ -20,6 +20,8 @@ services:
       POSTGRES_DB: app
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app
+    ports:
+      - "15432:5432"   # ← ホストPC:5432 → dbコンテナ:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
 

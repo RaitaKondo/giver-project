@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "giver-488205"
+  },
+  "targets": {
+    "giver-488205": {
+      "hosting": {
+        "stg": [
+          "giver-stg"
+        ],
+        "prod": [
+          "giver-prod"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

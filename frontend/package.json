@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:stg": "vite build --mode stg",
+    "build:prod": "vite build --mode prod",
+    "deploy:stg": "npm run build:stg && firebase deploy --only hosting:stg",
+    "deploy:prod": "npm run build:prod && firebase deploy --only hosting:prod"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",

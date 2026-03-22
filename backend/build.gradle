@@ -29,18 +29,26 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
+    // ★確実にクラスパスに載せる（runtimeOnlyではなくimplementation）
+    implementation 'org.flywaydb:flyway-database-postgresql:11.14.1'
+    implementation "com.google.cloud:google-cloud-storage:2.63.0"
+
     runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.flywaydb:flyway-database-postgresql' // ★追加
+
+    // Cloud SQL(Postgres)へ接続するための Socket Factory
+    implementation "com.google.cloud.sql:postgres-socket-factory:1.28.0"
+
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    // 既存（spring-boot-starter-data-jpa, postgresql 等）はそのまま
-
-    // Cloud SQL(Postgres)へ接続するための Socket Factory
-    implementation "com.google.cloud.sql:postgres-socket-factory:1.28.0"
 }
 
 tasks.named('test') {
