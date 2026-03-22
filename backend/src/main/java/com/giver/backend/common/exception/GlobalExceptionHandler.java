@@ -62,7 +62,8 @@ public class GlobalExceptionHandler {
     // 例外処理の意図:
     // - 予期しない障害は詳細を出し過ぎず 500 で返す。
     final ErrorResponse body = new ErrorResponse(
-        "Internal server error.",
+        // "Internal server error.",
+        ex.getMessage(), // --- 例外のメッセージをそのまま返す。開発初期はこれで十分。将来必要に応じてカスタマイズする。
         List.of(),
         OffsetDateTime.now()
     );
