@@ -1,8 +1,25 @@
-import { PostCard } from '../features/posts/PostCard'
-import { FollowUserCard } from '../features/users/FollowUserCard'
-import { posts, users } from '../mock/data'
+import { PostCard } from "../features/posts/PostCard";
+import { FollowUserCard } from "../features/users/FollowUserCard";
+import { posts, users } from "../mock/data";
+import { useEffect } from "react";
+import { fetchPosts } from "../api/postApi";
 
 export function FeedPage() {
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchPosts();
+
+        // 👇 ここが今回のゴール
+        console.log("APIレスポンス:", data);
+      } catch (error) {
+        console.error("取得失敗:", error);
+      }
+    };
+
+    load();
+  }, []);
+
   return (
     <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-12 lg:px-8">
       <aside className="space-y-4 lg:col-span-3">
@@ -26,16 +43,19 @@ export function FeedPage() {
         <div className="rounded-2xl bg-gradient-to-br from-primary to-sky-600 p-6 text-white shadow-xl shadow-primary/10">
           <h3 className="text-lg font-bold">今週の振り返り</h3>
           <p className="mt-2 text-sm leading-relaxed text-white/90">
-            あなたが保存した投稿は 6 件です。実践した内容を次の記録につなげましょう。
+            あなたが保存した投稿は 6
+            件です。実践した内容を次の記録につなげましょう。
           </p>
         </div>
         <div className="space-y-3">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">おすすめユーザー</h3>
+          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">
+            おすすめユーザー
+          </h3>
           {users.map((user) => (
             <FollowUserCard key={user.id} user={user} />
           ))}
         </div>
       </aside>
     </div>
-  )
+  );
 }

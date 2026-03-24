@@ -1,6 +1,6 @@
 package com.giver.backend.post.repository;
 
-import com.giver.backend.post.domain.PostImage;
+import com.giver.backend.post.entity.PostImage;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 

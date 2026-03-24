@@ -1,7 +1,11 @@
 package com.giver.backend.post.service;
 
-import com.giver.backend.post.domain.Post;
-import com.giver.backend.post.domain.PostImage;
+import com.giver.backend.context.dto.PostContextResponse;
+import com.giver.backend.context.entity.ContextMaster;
+import com.giver.backend.context.repository.ContextMasterRepository;
+import com.giver.backend.post.entity.Post;
+import com.giver.backend.post.entity.PostContext;
+import com.giver.backend.post.entity.PostImage;
 import com.giver.backend.post.dto.request.CreatePostRequest;
 import com.giver.backend.post.dto.response.PostImageResponse;
 import com.giver.backend.post.dto.response.PostResponse;
@@ -10,10 +14,14 @@ import com.giver.backend.storage.GcsImageStorageService;
 import com.giver.backend.storage.GcsSignedUrlService;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Locale;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,17 +36,20 @@ public class PostCommandService {
   private static final Set<String> ALLOWED_VISIBILITIES = Set.of("PUBLIC", "FOLLOWERS", "PRIVATE");
 
   private final PostRepository postRepository;
+  private final ContextMasterRepository contextMasterRepository;
   private final GcsImageStorageService gcsImageStorageService;
   private final GcsSignedUrlService gcsSignedUrlService;
   private final String defaultAuthorId;
 
   public PostCommandService(
       PostRepository postRepository,
+      ContextMasterRepository contextMasterRepository,
       GcsImageStorageService gcsImageStorageService,
       GcsSignedUrlService gcsSignedUrlService,
       @Value("${app.post.default-author-id}") String defaultAuthorId
   ) {
     this.postRepository = postRepository;
+    this.contextMasterRepository = contextMasterRepository;
     this.gcsImageStorageService = gcsImageStorageService;
     this.gcsSignedUrlService = gcsSignedUrlService;
     this.defaultAuthorId = defaultAuthorId;
@@ -72,6 +83,7 @@ public class PostCommandService {
     Post savedPost = postRepository.save(post);
 
     attachImages(savedPost, safeImages);
+    attachContexts(savedPost, request.contextIds());
 
     // 画像を addImage で関連付けた後に再保存し、post_images を cascade で永続化する。
     savedPost = postRepository.save(savedPost);
@@ -141,10 +153,46 @@ public class PostCommandService {
     }
   }
 
+  private void attachContexts(Post post, List<Long> contextIds) {
+    final LinkedHashSet<Long> normalizedIds = normalizeContextIds(contextIds);
+    if (normalizedIds.isEmpty()) {
+      return;
+    }
+
+    final List<ContextMaster> contextMasters = contextMasterRepository.findByIdInAndIsActiveTrue(normalizedIds);
+    if (contextMasters.size() != normalizedIds.size()) {
+      throw new IllegalArgumentException("contextIds contains invalid or inactive context master id.");
+    }
+
+    final Map<Long, ContextMaster> contextMasterMap = contextMasters.stream()
+        .collect(Collectors.toMap(ContextMaster::getId, Function.identity()));
+
+    for (Long contextId : normalizedIds) {
+      post.addContext(contextMasterMap.get(contextId));
+    }
+  }
+
+  private LinkedHashSet<Long> normalizeContextIds(List<Long> contextIds) {
+    if (contextIds == null || contextIds.isEmpty()) {
+      return new LinkedHashSet<>();
+    }
+    return new LinkedHashSet<>(contextIds);
+  }
+
   private PostResponse toResponse(Post post) {
     final List<PostImageResponse> imageResponses = post.getImages().stream()
         .sorted(Comparator.comparingInt(PostImage::getSortOrder))
         .map(this::toImageResponse)
+        .toList();
+    final List<PostContextResponse> contextResponses = post.getPostContexts().stream()
+        .sorted(Comparator.comparing((PostContext postContext) -> postContext.getContextMaster().getSortOrder())
+            .thenComparing(postContext -> postContext.getContextMaster().getId()))
+        .map(postContext -> new PostContextResponse(
+            postContext.getContextMaster().getId(),
+            postContext.getContextMaster().getCode(),
+            postContext.getContextMaster().getName(),
+            postContext.getContextMaster().getCategory()
+        ))
         .toList();
 
     return new PostResponse(
@@ -156,7 +204,8 @@ public class PostCommandService {
         post.getChangeText(),
         post.getVisibility(),
         post.getCreatedAt(),
-        imageResponses
+        imageResponses,
+        contextResponses
     );
   }
 

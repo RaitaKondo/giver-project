@@ -1,7 +1,9 @@
 package com.giver.backend.post.service;
 
-import com.giver.backend.post.domain.Post;
-import com.giver.backend.post.domain.PostImage;
+import com.giver.backend.context.dto.PostContextResponse;
+import com.giver.backend.post.entity.Post;
+import com.giver.backend.post.entity.PostContext;
+import com.giver.backend.post.entity.PostImage;
 import com.giver.backend.post.dto.request.SearchPostsRequest;
 import com.giver.backend.post.dto.response.PostImageResponse;
 import com.giver.backend.post.dto.response.PostResponse;
@@ -82,6 +84,7 @@ public class PostQueryService {
         .sorted(Comparator.comparingInt(PostImage::getSortOrder))
         .map(this::toImageResponse)
         .toList();
+    final List<PostContextResponse> contexts = toContextResponses(post);
 
     return new PostResponse(
         post.getId(),
@@ -92,7 +95,8 @@ public class PostQueryService {
         post.getChangeText(),
         post.getVisibility(),
         post.getCreatedAt(),
-        images
+        images,
+        contexts
     );
   }
 
@@ -112,7 +116,8 @@ public class PostQueryService {
         toActionTextPreview(post.getActionText()),
         post.getVisibility(),
         post.getCreatedAt(),
-        thumbnailUrl
+        thumbnailUrl,
+        toContextResponses(post)
     );
   }
 
@@ -129,5 +134,18 @@ public class PostQueryService {
       return actionText;
     }
     return actionText.substring(0, PREVIEW_MAX_LENGTH);
+  }
+
+  private List<PostContextResponse> toContextResponses(Post post) {
+    return post.getPostContexts().stream()
+        .sorted(Comparator.comparing((PostContext postContext) -> postContext.getContextMaster().getSortOrder())
+            .thenComparing(postContext -> postContext.getContextMaster().getId()))
+        .map(postContext -> new PostContextResponse(
+            postContext.getContextMaster().getId(),
+            postContext.getContextMaster().getCode(),
+            postContext.getContextMaster().getName(),
+            postContext.getContextMaster().getCategory()
+        ))
+        .toList();
   }
 }
