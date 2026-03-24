@@ -21,5 +21,6 @@ export type User = {
   avatar: string
   bio: string
   expertise: string[]
+  // createdAt: string
   joinedAt: string
 }

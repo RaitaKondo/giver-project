@@ -4,6 +4,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.giver.backend.context.dto.PostContextResponse;
+
 public record PostResponse(
     UUID id,
     UUID authorId,
@@ -13,6 +15,7 @@ public record PostResponse(
     String changeText,
     String visibility,
     OffsetDateTime createdAt,
-    List<PostImageResponse> images
+    List<PostImageResponse> images,
+    List<PostContextResponse> contexts
 ) {
 }

@@ -5,8 +5,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.giver.backend.context.dto.PostContextResponse;
 import com.giver.backend.post.dto.request.CreatePostRequest;
 import com.giver.backend.post.dto.request.SearchPostsRequest;
 import com.giver.backend.post.dto.response.PostImageResponse;
@@ -54,7 +56,8 @@ class PostControllerTest {
         "change",
         "PUBLIC",
         OffsetDateTime.now(),
-        List.of(new PostImageResponse(UUID.randomUUID(), "https://example.com/signed", 0))
+        List.of(new PostImageResponse(UUID.randomUUID(), "https://example.com/signed", 0)),
+        List.of(new PostContextResponse(1L, "workplace", "職場", "PLACE"))
     );
 
     when(postCommandService.create(any(CreatePostRequest.class), any())).thenReturn(response);
@@ -145,7 +148,8 @@ class PostControllerTest {
         null,
         "PUBLIC",
         OffsetDateTime.now(),
-        List.of()
+        List.of(),
+        List.of(new PostContextResponse(1L, "workplace", "職場", "PLACE"))
     );
     when(postQueryService.findById(eq(postId))).thenReturn(response);
 
@@ -164,7 +168,8 @@ class PostControllerTest {
                 "preview",
                 "PUBLIC",
                 OffsetDateTime.now(),
-                null
+                null,
+                List.of(new PostContextResponse(1L, "workplace", "職場", "PLACE"))
             )
         )
     );
@@ -175,5 +180,24 @@ class PostControllerTest {
             .param("page", "0")
             .param("size", "20"))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  void createPost_returns400_whenContextIdsContainInvalidId() throws Exception {
+    when(postCommandService.create(any(CreatePostRequest.class), any()))
+        .thenThrow(new IllegalArgumentException("contextIds contains invalid or inactive context master id."));
+
+    final MockMultipartFile requestPart = new MockMultipartFile(
+        "request",
+        "",
+        MediaType.APPLICATION_JSON_VALUE,
+        """
+        {"title":"test","actionText":"do action","visibility":"PUBLIC","contextIds":[1,999]}
+        """.getBytes(StandardCharsets.UTF_8)
+    );
+
+    mockMvc.perform(multipart("/api/posts").file(requestPart))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value("contextIds contains invalid or inactive context master id."));
   }
 }

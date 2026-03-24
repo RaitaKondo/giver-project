@@ -1,4 +1,4 @@
-package com.giver.backend.post.domain;
+package com.giver.backend.post.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,6 +11,8 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import com.giver.backend.context.entity.ContextMaster;
 
 @Entity
 @Table(name = "posts")
@@ -45,6 +47,9 @@ public class Post {
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PostImage> images = new ArrayList<>();
 
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<PostContext> postContexts = new ArrayList<>();
+
   protected Post() {
     // JPA用の no-args constructor
   }
@@ -76,6 +81,11 @@ public class Post {
   public void addImage(PostImage image) {
     images.add(image);
     image.assignPost(this);
+  }
+
+  public void addContext(ContextMaster contextMaster) {
+    final PostContext postContext = new PostContext(this, contextMaster);
+    postContexts.add(postContext);
   }
 
   public UUID getId() {
@@ -112,5 +122,9 @@ public class Post {
 
   public List<PostImage> getImages() {
     return images;
+  }
+
+  public List<PostContext> getPostContexts() {
+    return postContexts;
   }
 }

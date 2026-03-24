@@ -1,24 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-type Visibility = "PUBLIC" | "FOLLOWERS" | "PRIVATE";
-
-type CreatePostResponse = {
-  id: string;
-  authorId: string;
-  title: string | null;
-  actionText: string;
-  conflictText: string | null;
-  changeText: string | null;
-  visibility: Visibility;
-  createdAt: string;
-  images: Array<{
-    id: string;
-    url: string;
-    sortOrder: number;
-  }>;
-};
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import {
+  createPost,
+  fetchContextMasters,
+  type ContextMasterResponse,
+  type Visibility,
+} from "../api/postApi";
 
 export function CreateRecordPage() {
   // タイトルは任意項目
@@ -39,6 +26,13 @@ export function CreateRecordPage() {
   // 画像は最大4枚
   const [images, setImages] = useState<File[]>([]);
 
+  // 投稿文脈はマスターから複数選択する
+  const [contextMasters, setContextMasters] = useState<ContextMasterResponse[]>(
+    [],
+  );
+  const [selectedContextIds, setSelectedContextIds] = useState<number[]>([]);
+  const [isLoadingContexts, setIsLoadingContexts] = useState(true);
+
   // 利用者に確認させたい注意事項用
   const [confirmedNoPersonalInfo, setConfirmedNoPersonalInfo] = useState(false);
 
@@ -51,6 +45,26 @@ export function CreateRecordPage() {
   const conflictTextLength = conflictText.length;
   const changeTextLength = changeText.length;
   const titleLength = title.length;
+
+  useEffect(() => {
+    const loadContextMasters = async () => {
+      try {
+        setIsLoadingContexts(true);
+        const response = await fetchContextMasters();
+        setContextMasters(response);
+      } catch (error) {
+        setErrorMessage(
+          error instanceof Error
+            ? error.message
+            : "文脈マスターの取得に失敗しました。",
+        );
+      } finally {
+        setIsLoadingContexts(false);
+      }
+    };
+
+    loadContextMasters();
+  }, []);
 
   const canSubmit = useMemo(() => {
     return (
@@ -87,7 +101,16 @@ export function CreateRecordPage() {
     setChangeText("");
     setVisibility("PUBLIC");
     setImages([]);
+    setSelectedContextIds([]);
     setConfirmedNoPersonalInfo(false);
+  };
+
+  const handleToggleContext = (contextId: number) => {
+    setSelectedContextIds((prev) =>
+      prev.includes(contextId)
+        ? prev.filter((id) => id !== contextId)
+        : [...prev, contextId],
+    );
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -123,29 +146,10 @@ export function CreateRecordPage() {
         conflictText: conflictText.trim() || null,
         changeText: changeText.trim() || null,
         visibility,
+        contextIds: selectedContextIds,
       };
 
-      const formData = new FormData();
-
-      // バックエンド側は request パートを JSON文字列として受け取る想定
-      formData.append("request", JSON.stringify(requestPayload));
-
-      // 画像は images パート名で複数追加
-      images.forEach((file) => {
-        formData.append("images", file);
-      });
-
-      const response = await fetch(`${API_BASE_URL}/api/posts`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.json().catch(() => null);
-        throw new Error(errorBody?.message ?? "投稿の公開に失敗しました。");
-      }
-
-      const createdPost = (await response.json()) as CreatePostResponse;
+      const createdPost = await createPost(requestPayload, images);
 
       setSuccessMessage("投稿を公開しました。");
       resetForm();
@@ -352,6 +356,72 @@ export function CreateRecordPage() {
                       </button>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <div className="flex items-center gap-3">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                6
+              </span>
+              <h2 className="text-xl font-bold">日常文脈</h2>
+            </div>
+
+            <p className="text-sm leading-relaxed text-slate-500">
+              この投稿がどんな場面や関係性で起きたかを選んでください。複数選択できます。
+            </p>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              {isLoadingContexts ? (
+                <p className="text-sm text-slate-500">文脈を読み込み中です...</p>
+              ) : contextMasters.length === 0 ? (
+                <p className="text-sm text-slate-500">
+                  選択可能な文脈がまだ登録されていません。
+                </p>
+              ) : (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {contextMasters.map((context) => {
+                    const selected = selectedContextIds.includes(context.id);
+
+                    return (
+                      <label
+                        key={context.id}
+                        className={`cursor-pointer rounded-2xl border p-4 transition ${
+                          selected
+                            ? "border-primary bg-primary/5"
+                            : "border-slate-200 hover:border-primary/40"
+                        }`}
+                      >
+                        <input
+                          checked={selected}
+                          className="sr-only"
+                          type="checkbox"
+                          onChange={() => handleToggleContext(context.id)}
+                        />
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="font-bold text-slate-800">
+                              {context.name}
+                            </p>
+                            <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                              {context.category}
+                            </p>
+                          </div>
+                          <span
+                            className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
+                              selected
+                                ? "bg-primary text-white"
+                                : "bg-slate-100 text-slate-500"
+                            }`}
+                          >
+                            {selected ? "選択中" : "未選択"}
+                          </span>
+                        </div>
+                      </label>
+                    );
+                  })}
                 </div>
               )}
             </div>
