@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   createPost,
@@ -8,6 +9,7 @@ import {
 } from "../api/postApi";
 
 export function CreateRecordPage() {
+  const navigate = useNavigate();
   // タイトルは任意項目
   const [title, setTitle] = useState("");
 
@@ -153,9 +155,7 @@ export function CreateRecordPage() {
 
       setSuccessMessage("投稿を公開しました。");
       resetForm();
-
-      // 必要なら詳細画面遷移に使える
-      console.log("created post:", createdPost);
+      navigate(`/posts/${createdPost.id}`);
     } catch (error) {
       setErrorMessage(
         error instanceof Error

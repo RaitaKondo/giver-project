@@ -43,10 +43,16 @@ public class PostQueryService {
 
   public PostResponse findById(UUID postId) {
     // 詳細取得の処理フロー:
-    // 1) images を含めて投稿を取得
-    // 2) 見つからない場合は 404 用の例外に変換
+    // 1) まず images を含めて投稿を取得
+    // 2) 同じ永続化コンテキスト内で contexts も別クエリで初期化
     // 3) object_name から署名付きURLを都度生成してレスポンスへ変換
+    //
+    // images と postContexts はどちらも "bag(List)" 扱いのため、
+    // 1クエリで同時 fetch すると Hibernate の MultipleBagFetchException を起こしやすい。
+    // そのため詳細取得では関連を2段階で読み込む。
     final Post post = postRepository.findWithImagesById(postId)
+        .orElseThrow(() -> new NoSuchElementException("Post not found: " + postId));
+    postRepository.findWithContextsById(postId)
         .orElseThrow(() -> new NoSuchElementException("Post not found: " + postId));
     return toPostResponse(post);
   }

@@ -1,3 +1,5 @@
+import { apiGet, apiPostFormData } from "./apiClient";
+
 export type Visibility = "PUBLIC" | "FOLLOWERS" | "PRIVATE";
 
 export type ContextMasterResponse = {
@@ -78,50 +80,21 @@ export type PostDetailResponse = {
   contexts: PostContextResponse[];
 };
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-export const fetchPosts = async (): Promise<PageResponse<PostSummaryResponse>> => {
-  const url = `${API_BASE_URL}/api/posts?visibility=PUBLIC&page=0&size=10`;
-
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch posts");
-  }
-
-  return response.json();
+export const fetchPosts = async (
+  visibility = "PUBLIC",
+  page = 0,
+  size = 10,
+): Promise<PageResponse<PostSummaryResponse>> => {
+  const query = new URLSearchParams({ visibility, page: String(page), size: String(size) });
+  return apiGet<PageResponse<PostSummaryResponse>>(`/api/posts?${query.toString()}`);
 };
 
 export const fetchContextMasters = async (): Promise<ContextMasterResponse[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/context-masters`, {
-    method: "GET",
-  });
-
-  if (!response.ok) {
-    throw new Error("文脈マスターの取得に失敗しました。");
-  }
-
-  return response.json();
+  return apiGet<ContextMasterResponse[]>("/api/context-masters");
 };
 
 export const fetchPostById = async (postId: string): Promise<PostDetailResponse> => {
-  const response = await fetch(`${API_BASE_URL}/api/posts/${postId}`, {
-    method: "GET",
-    credentials: "include",
-  });
-
-  if (response.status === 404) {
-    throw new Error("投稿が見つかりませんでした。");
-  }
-
-  if (!response.ok) {
-    throw new Error("投稿詳細の取得に失敗しました。");
-  }
-
-  return response.json();
+  return apiGet<PostDetailResponse>(`/api/posts/${postId}`);
 };
 
 export const createPost = async (
@@ -135,15 +108,5 @@ export const createPost = async (
     formData.append("images", file);
   });
 
-  const response = await fetch(`${API_BASE_URL}/api/posts`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => null);
-    throw new Error(errorBody?.message ?? "投稿の公開に失敗しました。");
-  }
-
-  return response.json();
+  return apiPostFormData<CreatePostResponse>("/api/posts", formData);
 };

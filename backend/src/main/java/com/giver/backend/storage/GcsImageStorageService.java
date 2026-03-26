@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.Locale;
+import org.springframework.util.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,19 +17,26 @@ public class GcsImageStorageService {
 
   private final Storage storage;
   private final String bucket;
+  private final boolean gcsEnabled;
 
   public GcsImageStorageService(
       Storage storage,
       @Value("${app.gcs.bucket}") String bucket
   ) {
-    // Objects.requireNonNull. 設定漏れや Bean 不備があれば起動時に早めに落ちます。つまり「null のまま実行して途中で壊れる」より前に検知したい、という意図です。
+    // Storage Bean は通常必要だが、bucket 未設定のローカル開発では upload をスキップできるようにする。
     this.storage = Objects.requireNonNull(storage);
-    this.bucket = Objects.requireNonNull(bucket);
+    this.bucket = bucket == null ? "" : bucket.trim();
+    this.gcsEnabled = StringUtils.hasText(this.bucket);
   }
 
   public StoredObject storePostImage(UUID postId, MultipartFile file) {
     try {
       final String objectName = buildObjectName(postId, file.getOriginalFilename());
+      if (!gcsEnabled) {
+        // GCS 未設定時は DB 参照用 objectName だけ発行し、画像アップロードは行わない。
+        return new StoredObject("", objectName, file.getContentType());
+      }
+
       final BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of(bucket, objectName))
           .setContentType(file.getContentType())
           .build();

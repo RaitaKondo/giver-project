@@ -1,9 +1,85 @@
-import { Link } from 'react-router-dom'
-import { PostCard } from '../features/posts/PostCard'
-import { FollowUserCard } from '../features/users/FollowUserCard'
-import { posts, users } from '../mock/data'
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+
+import { fetchPosts, type PostSummaryResponse } from "../api/postApi";
+import { PostCard } from "../features/posts/PostCard";
+import { toFeedPost, toProfileSummary } from "../features/posts/postMappers";
+import { FollowUserCard } from "../features/users/FollowUserCard";
+import { StatePanel } from "../shared/ui/StatePanel";
+import type { Post, User } from "../types/models";
 
 export function DiscoverPage() {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [rawPosts, setRawPosts] = useState<PostSummaryResponse[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string>("all");
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setIsLoading(true);
+        setErrorMessage("");
+
+        const page = await fetchPosts("PUBLIC", 0, 30);
+        setRawPosts(page.content);
+        setPosts(page.content.map((post) => toFeedPost(post)));
+      } catch (error) {
+        setErrorMessage(error instanceof Error ? error.message : "投稿の取得に失敗しました。");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  const topTags = useMemo(() => {
+    const countByTag = new Map<string, number>();
+    rawPosts.forEach((post) => {
+      post.contexts.forEach((context) => {
+        countByTag.set(context.name, (countByTag.get(context.name) ?? 0) + 1);
+      });
+    });
+
+    return [...countByTag.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([name]) => name);
+  }, [rawPosts]);
+
+  const visiblePosts = useMemo(() => {
+    if (selectedTag === "all") {
+      return posts;
+    }
+    return posts.filter((post) => post.tags.includes(`#${selectedTag}`));
+  }, [posts, selectedTag]);
+
+  const users = useMemo<User[]>(() => {
+    const seen = new Set<string>();
+
+    return rawPosts
+      .filter((post) => {
+        if (seen.has(post.authorId)) {
+          return false;
+        }
+        seen.add(post.authorId);
+        return true;
+      })
+      .slice(0, 5)
+      .map((post) => {
+        const profile = toProfileSummary(post.authorId, post.contexts);
+        return {
+          id: profile.id,
+          name: profile.name,
+          avatar: profile.avatar,
+          bio: profile.bio,
+          expertise: profile.expertise,
+          joinedAt: profile.joinedAt,
+        };
+      });
+  }, [rawPosts]);
+
   return (
     <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
       <section className="rounded-2xl border border-slate-200 bg-white p-6">
@@ -13,12 +89,29 @@ export function DiscoverPage() {
             <p className="mt-2 text-slate-600">関心の近い実践を探して、フォローや保存で学びを蓄積できます。</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {['#教育', '#環境', '#キャリア', '#地域連携'].map((tag) => (
+            <button
+              className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+                selectedTag === "all"
+                  ? "border-primary bg-primary text-white"
+                  : "border-slate-300 hover:border-primary hover:text-primary"
+              }`}
+              type="button"
+              onClick={() => setSelectedTag("all")}
+            >
+              すべて
+            </button>
+            {topTags.map((tag) => (
               <button
-                className="rounded-full border border-slate-300 px-4 py-1.5 text-sm font-medium transition-colors hover:border-primary hover:text-primary"
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+                  selectedTag === tag
+                    ? "border-primary bg-primary text-white"
+                    : "border-slate-300 hover:border-primary hover:text-primary"
+                }`}
                 key={tag}
+                type="button"
+                onClick={() => setSelectedTag(tag)}
               >
-                {tag}
+                #{tag}
               </button>
             ))}
           </div>
@@ -27,17 +120,22 @@ export function DiscoverPage() {
 
       <section className="grid grid-cols-1 gap-8 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-8">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
+          {isLoading ? <StatePanel message="投稿を読み込み中です..." /> : null}
+          {!isLoading && errorMessage ? <StatePanel message={errorMessage} tone="error" /> : null}
+          {!isLoading && !errorMessage && visiblePosts.length === 0 ? (
+            <StatePanel message="条件に一致する投稿がありません。タグを切り替えて試してください。" />
+          ) : null}
+          {!isLoading && !errorMessage
+            ? visiblePosts.map((post) => <PostCard key={post.id} post={post} />)
+            : null}
         </div>
         <aside className="space-y-4 lg:col-span-4">
           <div className="rounded-xl border border-slate-200 bg-white p-5">
             <h3 className="mb-3 text-lg font-bold">注目ユーザー</h3>
             <div className="space-y-3">
-              {users.map((user) => (
-                <FollowUserCard key={user.id} user={user} />
-              ))}
+              {users.length > 0
+                ? users.map((user) => <FollowUserCard key={user.id} user={user} />)
+                : <StatePanel message="公開投稿が増えると注目ユーザーが表示されます。" />}
             </div>
             <Link className="mt-4 inline-flex text-sm font-bold text-primary hover:underline" to="/feed">
               フィード全体を見る
@@ -46,5 +144,5 @@ export function DiscoverPage() {
         </aside>
       </section>
     </div>
-  )
+  );
 }
