@@ -1,19 +1,32 @@
+import { useEffect, useState } from "react";
+
+import { fetchPosts, type PostSummaryResponse } from "../api/postApi";
 import { PostCard } from "../features/posts/PostCard";
 import { FollowUserCard } from "../features/users/FollowUserCard";
-import { posts, users } from "../mock/data";
-import { useEffect } from "react";
-import { fetchPosts } from "../api/postApi";
+import { users } from "../mock/data";
+import type { Post } from "../types/models";
 
 export function FeedPage() {
+  const [feedPosts, setFeedPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchPosts();
+        setIsLoading(true);
+        setErrorMessage("");
 
-        // 👇 ここが今回のゴール
-        console.log("APIレスポンス:", data);
+        const data = await fetchPosts();
+        setFeedPosts(
+          data.content.map((post, index) => toFeedPost(post, index)),
+        );
       } catch (error) {
-        console.error("取得失敗:", error);
+        setErrorMessage(
+          error instanceof Error ? error.message : "投稿の取得に失敗しました。",
+        );
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -34,9 +47,27 @@ export function FeedPage() {
       </aside>
 
       <section className="space-y-6 lg:col-span-6">
-        {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
+        {isLoading ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
+            投稿を読み込み中です...
+          </div>
+        ) : null}
+
+        {!isLoading && errorMessage ? (
+          <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm font-medium text-red-700">
+            {errorMessage}
+          </div>
+        ) : null}
+
+        {!isLoading && !errorMessage && feedPosts.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
+            まだ投稿がありません。
+          </div>
+        ) : null}
+
+        {!isLoading && !errorMessage
+          ? feedPosts.map((post) => <PostCard key={post.id} post={post} />)
+          : null}
       </section>
 
       <aside className="space-y-6 lg:col-span-3">
@@ -58,4 +89,36 @@ export function FeedPage() {
       </aside>
     </div>
   );
+}
+
+function toFeedPost(post: PostSummaryResponse, index: number): Post {
+  const mockUser = users[index % users.length];
+
+  return {
+    id: post.id,
+    authorId: post.authorId,
+    authorName: mockUser.name,
+    authorAvatar: mockUser.avatar,
+    authorRole: mockUser.expertise[0] ?? "コミュニティメンバー",
+    createdAt: formatCreatedAt(post.createdAt),
+    title: post.title?.trim() || "無題の投稿",
+    action: post.actionTextPreview,
+    outcome: post.changeText ?? undefined,
+    tags: post.contexts.map((context) => `#${context.name}`),
+    image: post.thumbnailUrl ?? undefined,
+    isPublic: post.visibility === "PUBLIC",
+  };
+}
+
+function formatCreatedAt(createdAt: string) {
+  const date = new Date(createdAt);
+  if (Number.isNaN(date.getTime())) {
+    return createdAt;
+  }
+
+  return new Intl.DateTimeFormat("ja-JP", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
 }
