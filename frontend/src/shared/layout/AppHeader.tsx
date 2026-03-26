@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
+import { env } from '../../config/env'
 
 const navItems = [
   { to: '/', label: 'ホーム' },
@@ -37,7 +38,7 @@ export function AppHeader() {
         <div className="flex items-center gap-3">
           <Link
             className="hidden rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-primary hover:text-primary sm:inline-flex"
-            to="/users/alex"
+            to={`/users/${env.defaultAuthorId}`}
           >
             マイプロフィール
           </Link>

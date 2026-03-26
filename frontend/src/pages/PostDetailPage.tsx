@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { fetchPostById, type PostDetailResponse } from "../api/postApi";
-import { users } from "../mock/data";
+import { formatCreatedAt, toProfileSummary } from "../features/posts/postMappers";
+import { StatePanel } from "../shared/ui/StatePanel";
 
 export function PostDetailPage() {
   const { id = "" } = useParams();
@@ -24,11 +25,7 @@ export function PostDetailPage() {
         const response = await fetchPostById(id);
         setPost(response);
       } catch (error) {
-        setErrorMessage(
-          error instanceof Error
-            ? error.message
-            : "投稿詳細の取得に失敗しました。",
-        );
+        setErrorMessage(error instanceof Error ? error.message : "投稿詳細の取得に失敗しました。");
       } finally {
         setIsLoading(false);
       }
@@ -37,23 +34,24 @@ export function PostDetailPage() {
     load();
   }, [id]);
 
-  const mockUser = post ? users[toMockUserIndex(post.authorId)] : null;
+  const profile = useMemo(
+    () => (post ? toProfileSummary(post.authorId, post.contexts) : null),
+    [post],
+  );
 
   if (isLoading) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 lg:px-8">
-        <p className="text-sm text-slate-500">投稿を読み込み中です...</p>
+        <StatePanel message="投稿を読み込み中です..." />
       </div>
     );
   }
 
-  if (errorMessage || !post || !mockUser) {
+  if (errorMessage || !post || !profile) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 lg:px-8">
-        <p className="text-lg font-semibold">
-          {errorMessage || "投稿が見つかりませんでした。"}
-        </p>
-        <Link className="mt-4 inline-flex font-bold text-primary hover:underline" to="/feed">
+      <div className="mx-auto max-w-4xl space-y-4 px-4 py-14 sm:px-6 lg:px-8">
+        <StatePanel message={errorMessage || "投稿が見つかりませんでした。"} tone="error" />
+        <Link className="inline-flex font-bold text-primary hover:underline" to="/feed">
           フィードへ戻る
         </Link>
       </div>
@@ -76,11 +74,11 @@ export function PostDetailPage() {
 
       <div className="mb-10 flex flex-col justify-between gap-6 border-b border-slate-200 pb-8 sm:flex-row sm:items-center">
         <div className="flex items-center gap-4">
-          <img alt={mockUser.name} className="h-16 w-16 rounded-full object-cover ring-2 ring-primary/30 ring-offset-4" src={mockUser.avatar} />
+          <img alt={profile.name} className="h-16 w-16 rounded-full object-cover ring-2 ring-primary/30 ring-offset-4" src={profile.avatar} />
           <div>
-            <h3 className="text-xl font-bold">{mockUser.name}</h3>
+            <h3 className="text-xl font-bold">{profile.name}</h3>
             <p className="text-sm text-slate-500">
-              {mockUser.expertise[0] ?? "コミュニティメンバー"} ・ {formatCreatedAt(post.createdAt)}
+              {profile.expertise[0] ?? "コミュニティメンバー"} ・ {formatCreatedAt(post.createdAt)}
             </p>
           </div>
         </div>
@@ -142,9 +140,7 @@ export function PostDetailPage() {
 
         {post.images.length > 0 ? (
           <section>
-            <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-slate-500">
-              画像
-            </h2>
+            <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-slate-500">画像</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {post.images.map((image) => (
                 <img
@@ -159,30 +155,7 @@ export function PostDetailPage() {
         ) : null}
       </article>
 
-      <footer className="mt-16 border-t border-slate-200 pt-8 text-sm text-slate-500">
-        公開範囲: {post.visibility}
-      </footer>
+      <footer className="mt-16 border-t border-slate-200 pt-8 text-sm text-slate-500">公開範囲: {post.visibility}</footer>
     </div>
   );
-}
-
-function toMockUserIndex(authorId: string) {
-  let total = 0;
-  for (const char of authorId) {
-    total += char.charCodeAt(0);
-  }
-  return total % users.length;
-}
-
-function formatCreatedAt(createdAt: string) {
-  const date = new Date(createdAt);
-  if (Number.isNaN(date.getTime())) {
-    return createdAt;
-  }
-
-  return new Intl.DateTimeFormat("ja-JP", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(date);
 }

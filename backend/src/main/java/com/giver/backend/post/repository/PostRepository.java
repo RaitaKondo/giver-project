@@ -9,8 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepository extends JpaRepository<Post, UUID> {
 
-  @EntityGraph(attributePaths = {"images", "postContexts", "postContexts.contextMaster"})
+  @EntityGraph(attributePaths = "images")
   java.util.Optional<Post> findWithImagesById(UUID id);
+
+  @EntityGraph(attributePaths = {"postContexts", "postContexts.contextMaster"})
+  java.util.Optional<Post> findWithContextsById(UUID id);
 
   @EntityGraph(attributePaths = "images")
   Page<Post> findByVisibility(String visibility, Pageable pageable);
