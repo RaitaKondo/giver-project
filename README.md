@@ -70,27 +70,20 @@ GCS_SIGNED_URL_DURATION_MINUTES=15
 
 ## ローカル起動手順
 
-1. DB起動
+1. BE,DB起動
 
 ```bash
-docker compose up -d db
+docker compose up --build
 ```
 
-2. Backend起動
-
-```bash
-cd backend
-./gradlew bootRun
-```
-
-3. Frontend起動
+2. Frontend起動
 
 ```bash
 cd frontend
 npm run dev
 ```
 
-4. ブラウザで確認
+3. ブラウザで確認
 
 - Frontend: `http://localhost:5173`
 - Backend health: `http://localhost:8080/actuator/health`
