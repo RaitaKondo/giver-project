@@ -11,6 +11,7 @@ public record PostSummaryResponse(
     UUID authorId,
     String title,
     String actionTextPreview,
+    String changeText,
     String visibility,
     OffsetDateTime createdAt,
     String thumbnailUrl,

@@ -32,12 +32,14 @@ export function PostCard({ post }: PostCardProps) {
               <span className="mt-0.5 shrink-0 text-xs font-bold uppercase tracking-wider text-slate-400">行動</span>
               <p className="text-slate-600">{post.action}</p>
             </div>
-            <div className="rounded-r-lg border-l-4 border-primary bg-primary/10 p-3">
-              <div className="flex gap-2">
-                <span className="mt-0.5 shrink-0 text-xs font-bold uppercase tracking-wider text-primary">結果</span>
-                <p className="font-medium text-slate-800">{post.outcome}</p>
+            {post.outcome ? (
+              <div className="rounded-r-lg border-l-4 border-primary bg-primary/10 p-3">
+                <div className="flex gap-2">
+                  <span className="mt-0.5 shrink-0 text-xs font-bold uppercase tracking-wider text-primary">結果</span>
+                  <p className="font-medium text-slate-800">{post.outcome}</p>
+                </div>
               </div>
-            </div>
+            ) : null}
           </div>
         </Link>
 

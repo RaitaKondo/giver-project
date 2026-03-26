@@ -114,6 +114,7 @@ public class PostQueryService {
         post.getAuthorId(),
         post.getTitle(),
         toActionTextPreview(post.getActionText()),
+        post.getChangeText(),
         post.getVisibility(),
         post.getCreatedAt(),
         thumbnailUrl,

@@ -7,9 +7,9 @@ export type Post = {
   createdAt: string
   title: string
   action: string
-  hesitation: string
-  outcome: string
-  lesson: string
+  hesitation?: string
+  outcome?: string
+  lesson?: string
   tags: string[]
   image?: string
   isPublic: boolean
