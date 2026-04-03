@@ -9,10 +9,15 @@ services:
       DB_URL: jdbc:postgresql://db:5432/app
       DB_USER: app
       DB_PASS: app
-      # 開発中だけupdate、後でFlyway/Liquibaseに寄せてvalidateへ戻す
-      DDL_AUTO: update
+      # Firebase Admin が Secret Manager を読むための GCP 認証情報。
+      FIREBASE_PROJECT_ID: giver-488205
+      FIREBASE_SERVICE_ACCOUNT_SECRET_NAME: firebase-service-account
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-adc.json
     depends_on:
       - db
+    volumes:
+      # `gcloud auth application-default login` で生成される ADC を読み込む。
+      - ${USERPROFILE}\AppData\Roaming\gcloud\application_default_credentials.json:/secrets/gcp-adc.json:ro
 
   db:
     image: postgres:16
