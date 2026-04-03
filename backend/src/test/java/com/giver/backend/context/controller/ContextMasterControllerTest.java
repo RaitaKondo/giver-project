@@ -5,16 +5,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.giver.backend.auth.FirebaseAuthenticationFilter;
 import com.giver.backend.context.dto.ContextMasterResponse;
 import com.giver.backend.context.service.ContextMasterService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(ContextMasterController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class ContextMasterControllerTest {
 
   @Autowired
@@ -22,6 +25,9 @@ class ContextMasterControllerTest {
 
   @MockitoBean
   private ContextMasterService contextMasterService;
+
+  @MockitoBean
+  private FirebaseAuthenticationFilter firebaseAuthenticationFilter;
 
   @Test
   void findActive_returnsOnlyActiveContexts() throws Exception {

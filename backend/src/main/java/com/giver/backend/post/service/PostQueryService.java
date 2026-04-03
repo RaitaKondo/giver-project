@@ -74,6 +74,24 @@ public class PostQueryService {
     return posts.map(this::toSummaryResponse);
   }
 
+  public Page<PostSummaryResponse> findMyPosts(UUID authorId, Integer page, Integer size) {
+    final Pageable pageable = PageRequest.of(
+        normalizePage(page),
+        normalizeSize(size),
+        Sort.by(Sort.Direction.DESC, "createdAt")
+    );
+    return postRepository.findByAuthorId(authorId, pageable).map(this::toSummaryResponse);
+  }
+
+  public Page<PostSummaryResponse> findPublicPostsByAuthor(UUID authorId, Integer page, Integer size) {
+    final Pageable pageable = PageRequest.of(
+        normalizePage(page),
+        normalizeSize(size),
+        Sort.by(Sort.Direction.DESC, "createdAt")
+    );
+    return postRepository.findByAuthorIdAndVisibility(authorId, "PUBLIC", pageable).map(this::toSummaryResponse);
+  }
+
   private String normalizeVisibilityFilter(String visibility) {
     if (visibility == null || visibility.isBlank()) {
       return null;
@@ -83,6 +101,17 @@ public class PostQueryService {
       throw new IllegalArgumentException("Invalid visibility filter.");
     }
     return normalized;
+  }
+
+  private int normalizePage(Integer page) {
+    return page == null || page < 0 ? 0 : page;
+  }
+
+  private int normalizeSize(Integer size) {
+    if (size == null || size <= 0) {
+      return 20;
+    }
+    return Math.min(size, 100);
   }
 
   private PostResponse toPostResponse(Post post) {

@@ -1,6 +1,7 @@
 package com.giver.backend.post.service;
 
 import com.giver.backend.context.dto.PostContextResponse;
+import com.giver.backend.auth.CurrentUserService;
 import com.giver.backend.context.entity.ContextMaster;
 import com.giver.backend.context.repository.ContextMasterRepository;
 import com.giver.backend.post.entity.Post;
@@ -22,7 +23,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,20 +39,20 @@ public class PostCommandService {
   private final ContextMasterRepository contextMasterRepository;
   private final GcsImageStorageService gcsImageStorageService;
   private final GcsSignedUrlService gcsSignedUrlService;
-  private final String defaultAuthorId;
+  private final CurrentUserService currentUserService;
 
   public PostCommandService(
       PostRepository postRepository,
       ContextMasterRepository contextMasterRepository,
       GcsImageStorageService gcsImageStorageService,
       GcsSignedUrlService gcsSignedUrlService,
-      @Value("${app.post.default-author-id}") String defaultAuthorId
+      CurrentUserService currentUserService
   ) {
     this.postRepository = postRepository;
     this.contextMasterRepository = contextMasterRepository;
     this.gcsImageStorageService = gcsImageStorageService;
     this.gcsSignedUrlService = gcsSignedUrlService;
-    this.defaultAuthorId = defaultAuthorId;
+    this.currentUserService = currentUserService;
   }
 
   @Transactional
@@ -63,10 +63,8 @@ public class PostCommandService {
     // - 要件の枚数制限と MIME type の簡易検査をここで一元的に実施し、保存処理を安全にする。
     validateImages(safeImages);
 
-    // authorId 解決意図:
-    // - Aフェーズでは認証なしのため、posts.author_id の NOT NULL/FK 制約を満たす guest ユーザーIDを使う。
-    // - 将来は Firebase Auth 導入後に、認証ユーザーIDへ差し替える前提。
-    final UUID authorId = resolveAuthorId();
+    // Firebase 認証後に users テーブルへ同期された現在ユーザーを投稿者として採用する。
+    final UUID authorId = currentUserService.requireCurrentUserId();
 
     final Post post = new Post(
         authorId,
@@ -94,14 +92,6 @@ public class PostCommandService {
   private List<MultipartFile> normalizeImages(List<MultipartFile> images) {
     // multipart 画像は省略可能なので null を空配列として扱い、呼び出し側の分岐を減らす。
     return images == null ? List.of() : images;
-  }
-
-  private UUID resolveAuthorId() {
-    try {
-      return UUID.fromString(defaultAuthorId);
-    } catch (IllegalArgumentException ex) {
-      throw new IllegalArgumentException("Invalid app.post.default-author-id format.", ex);
-    }
   }
 
   private String normalizeVisibility(String visibility) {

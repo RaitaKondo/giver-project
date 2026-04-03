@@ -1,15 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
+import { bookmarkPost, followUser, removeBookmark, unfollowUser } from "../api/authApi";
 import { fetchPostById, type PostDetailResponse } from "../api/postApi";
+import { useAuth } from "../features/auth/useAuth";
 import { formatCreatedAt, toProfileSummary } from "../features/posts/postMappers";
 import { StatePanel } from "../shared/ui/StatePanel";
 
 export function PostDetailPage() {
+  const navigate = useNavigate();
   const { id = "" } = useParams();
+  const { isAuthenticated } = useAuth();
   const [post, setPost] = useState<PostDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState<"follow" | "bookmark" | null>(null);
 
   useEffect(() => {
     if (!id) {
@@ -38,6 +45,54 @@ export function PostDetailPage() {
     () => (post ? toProfileSummary(post.authorId, post.contexts) : null),
     [post],
   );
+
+  const requireLogin = () => {
+    if (isAuthenticated) {
+      return true;
+    }
+    navigate(`/login?redirect=${encodeURIComponent(`/posts/${id}`)}`);
+    return false;
+  };
+
+  const handleFollowToggle = async () => {
+    if (!post || !requireLogin()) {
+      return;
+    }
+    setIsSubmitting("follow");
+    try {
+      if (isFollowing) {
+        await unfollowUser(post.authorId);
+        setIsFollowing(false);
+      } else {
+        await followUser(post.authorId);
+        setIsFollowing(true);
+      }
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "フォローに失敗しました。");
+    } finally {
+      setIsSubmitting(null);
+    }
+  };
+
+  const handleBookmarkToggle = async () => {
+    if (!post || !requireLogin()) {
+      return;
+    }
+    setIsSubmitting("bookmark");
+    try {
+      if (isBookmarked) {
+        await removeBookmark(post.id);
+        setIsBookmarked(false);
+      } else {
+        await bookmarkPost(post.id);
+        setIsBookmarked(true);
+      }
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "保存に失敗しました。");
+    } finally {
+      setIsSubmitting(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -83,11 +138,21 @@ export function PostDetailPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button className="rounded-lg bg-primary px-6 py-2.5 font-bold text-white transition-colors hover:bg-primary/90">
-            フォロー
+          <button
+            className="rounded-lg bg-primary px-6 py-2.5 font-bold text-white transition-colors hover:bg-primary/90 disabled:opacity-60"
+            disabled={isSubmitting === "follow"}
+            type="button"
+            onClick={handleFollowToggle}
+          >
+            {isFollowing ? "フォロー中" : "フォロー"}
           </button>
-          <button className="rounded-lg border border-slate-200 p-2.5 transition-colors hover:border-primary hover:text-primary">
-            <span className="material-symbols-outlined">bookmark</span>
+          <button
+            className="rounded-lg border border-slate-200 p-2.5 transition-colors hover:border-primary hover:text-primary disabled:opacity-60"
+            disabled={isSubmitting === "bookmark"}
+            type="button"
+            onClick={handleBookmarkToggle}
+          >
+            <span className="material-symbols-outlined">{isBookmarked ? "bookmark_added" : "bookmark"}</span>
           </button>
         </div>
       </div>

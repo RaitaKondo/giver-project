@@ -1,4 +1,7 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { bookmarkPost, removeBookmark } from '../../api/authApi'
+import { useAuth } from '../auth/useAuth'
 import type { Post } from '../../types/models'
 
 type PostCardProps = {
@@ -6,6 +9,30 @@ type PostCardProps = {
 }
 
 export function PostCard({ post }: PostCardProps) {
+  const { isAuthenticated } = useAuth()
+  const [isBookmarked, setIsBookmarked] = useState(Boolean(post.isBookmarked))
+  const [isSubmittingBookmark, setIsSubmittingBookmark] = useState(false)
+
+  const handleBookmarkToggle = async () => {
+    if (!isAuthenticated) {
+      window.location.href = `/login?redirect=${encodeURIComponent(`/posts/${post.id}`)}`
+      return
+    }
+
+    setIsSubmittingBookmark(true)
+    try {
+      if (isBookmarked) {
+        await removeBookmark(post.id)
+        setIsBookmarked(false)
+      } else {
+        await bookmarkPost(post.id)
+        setIsBookmarked(true)
+      }
+    } finally {
+      setIsSubmittingBookmark(false)
+    }
+  }
+
   return (
     <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       {post.image ? <img alt={post.title} className="h-48 w-full object-cover" src={post.image} /> : null}
@@ -20,8 +47,15 @@ export function PostCard({ post }: PostCardProps) {
               </p>
             </div>
           </div>
-          <button className="rounded-lg border border-slate-200 p-2 text-slate-500 transition-colors hover:border-primary hover:text-primary">
-            <span className="material-symbols-outlined text-base">bookmark</span>
+          <button
+            className="rounded-lg border border-slate-200 p-2 text-slate-500 transition-colors hover:border-primary hover:text-primary disabled:opacity-60"
+            disabled={isSubmittingBookmark}
+            type="button"
+            onClick={handleBookmarkToggle}
+          >
+            <span className="material-symbols-outlined text-base">
+              {isBookmarked ? 'bookmark_added' : 'bookmark'}
+            </span>
           </button>
         </div>
 
