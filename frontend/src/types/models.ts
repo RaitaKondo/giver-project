@@ -13,6 +13,7 @@ export type Post = {
   tags: string[]
   image?: string
   isPublic: boolean
+  isBookmarked?: boolean
 }
 
 export type User = {
@@ -21,6 +22,6 @@ export type User = {
   avatar: string
   bio: string
   expertise: string[]
-  // createdAt: string
   joinedAt: string
+  isFollowing?: boolean
 }

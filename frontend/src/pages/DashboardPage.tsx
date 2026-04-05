@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { fetchPosts } from "../api/postApi";
-import { env } from "../config/env";
+import { fetchMyPosts } from "../api/authApi";
+import { useAuth } from "../features/auth/useAuth";
 import { formatCreatedAt, toFeedPost } from "../features/posts/postMappers";
 import { StatePanel } from "../shared/ui/StatePanel";
 import type { Post } from "../types/models";
 
 export function DashboardPage() {
+  const { profile } = useAuth();
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -18,7 +19,7 @@ export function DashboardPage() {
         setIsLoading(true);
         setErrorMessage("");
 
-        const page = await fetchPosts("PUBLIC", 0, 100);
+        const page = await fetchMyPosts(0, 100);
         setAllPosts(page.content.map((post) => toFeedPost(post)));
       } catch (error) {
         setErrorMessage(error instanceof Error ? error.message : "ダッシュボードの取得に失敗しました。");
@@ -30,10 +31,7 @@ export function DashboardPage() {
     load();
   }, []);
 
-  const myPosts = useMemo(
-    () => allPosts.filter((post) => post.authorId === env.defaultAuthorId),
-    [allPosts],
-  );
+  const myPosts = allPosts;
 
   const stats = useMemo(() => {
     const uniqueTags = new Set(myPosts.flatMap((post) => post.tags));
@@ -42,10 +40,10 @@ export function DashboardPage() {
     return [
       ["総投稿数", String(myPosts.length), `${recentPosts}件 / 30日`],
       ["よく使う文脈", String(uniqueTags.size), "タグ数"],
-      ["画像付き投稿", String(myPosts.filter((post) => Boolean(post.image)).length), "公開投稿"],
-      ["表示対象ID", `${env.defaultAuthorId.slice(0, 8)}...`, "暫定ユーザー"],
+      ["画像付き投稿", String(myPosts.filter((post) => Boolean(post.image)).length), "全公開範囲"],
+      ["ログイン名", profile?.displayName ?? "-", "認証ユーザー"],
     ] as const;
-  }, [myPosts]);
+  }, [myPosts, profile?.displayName]);
 
   const topTags = useMemo(() => {
     const counts = new Map<string, number>();
@@ -66,7 +64,7 @@ export function DashboardPage() {
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">振り返りと傾向</h1>
           <p className="mt-2 max-w-xl text-slate-500">
-            認証導入前のため、現在は暫定ユーザーID（`{env.defaultAuthorId}`）の投稿データを集計しています。
+            ログイン中のアカウントに紐づく投稿を集計しています。公開・限定公開・非公開をまとめて確認できます。
           </p>
         </div>
       </header>
@@ -112,9 +110,9 @@ export function DashboardPage() {
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
               <h3 className="mb-4 text-lg font-bold">今月のメモ</h3>
               <div className="space-y-4 text-sm text-slate-600">
-                <p>公開投稿のみを集計対象にしています。</p>
-                <p>フォロー・保存の集計はバックエンドAPI未実装のため未表示です。</p>
-                <p>認証導入後に「自分の投稿」へ置き換える予定です。</p>
+                <p>ログイン中ユーザーの投稿だけを表示しています。</p>
+                <p>フォロー・保存の詳細表示は次の拡張で追加しやすい構成にしています。</p>
+                <p>プロフィール編集はヘッダーの「プロフィール編集」から開けます。</p>
               </div>
             </div>
           </section>
@@ -144,7 +142,7 @@ export function DashboardPage() {
                   </div>
                 ))
               ) : (
-                <StatePanel message="対象ユーザーの投稿がまだありません。投稿を作成すると反映されます。" />
+                <StatePanel message="まだ投稿がありません。最初の記録を作成するとここに反映されます。" />
               )}
             </div>
           </section>

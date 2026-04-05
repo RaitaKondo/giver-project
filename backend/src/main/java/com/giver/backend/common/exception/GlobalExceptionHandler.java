@@ -39,6 +39,12 @@ public class GlobalExceptionHandler {
     return badRequest(ex.getMessage(), List.of());
   }
 
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException ex) {
+    final ErrorResponse body = new ErrorResponse(ex.getMessage(), List.of(), OffsetDateTime.now());
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
+  }
+
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
     return badRequest("Malformed request body.", List.of());

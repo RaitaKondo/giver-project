@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.giver.backend.auth.FirebaseAuthenticationFilter;
 import com.giver.backend.context.dto.PostContextResponse;
 import com.giver.backend.post.dto.request.CreatePostRequest;
 import com.giver.backend.post.dto.request.SearchPostsRequest;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +33,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(PostController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class PostControllerTest {
 
   @Autowired
@@ -41,6 +44,9 @@ class PostControllerTest {
 
   @MockitoBean
   private PostQueryService postQueryService;
+
+  @MockitoBean
+  private FirebaseAuthenticationFilter firebaseAuthenticationFilter;
 
   @Test
   void createPost_returns201_whenMultipartRequestIsValid() throws Exception {

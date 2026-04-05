@@ -20,4 +20,10 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
 
   @EntityGraph(attributePaths = "images")
   Page<Post> findAll(Pageable pageable);
+
+  @EntityGraph(attributePaths = "images")
+  Page<Post> findByAuthorId(UUID authorId, Pageable pageable);
+
+  @EntityGraph(attributePaths = "images")
+  Page<Post> findByAuthorIdAndVisibility(UUID authorId, String visibility, Pageable pageable);
 }

@@ -3,8 +3,10 @@ package com.giver.backend.post.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
+import com.giver.backend.auth.CurrentUserService;
 import com.giver.backend.context.entity.ContextMaster;
 import com.giver.backend.context.repository.ContextMasterRepository;
 import com.giver.backend.post.dto.request.CreatePostRequest;
@@ -24,7 +26,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class PostCommandServiceTest {
 
-  private static final String DEFAULT_AUTHOR_ID = "00000000-0000-0000-0000-000000000001";
+  private static final java.util.UUID CURRENT_USER_ID =
+      java.util.UUID.fromString("00000000-0000-0000-0000-000000000001");
 
   @Mock
   private PostRepository postRepository;
@@ -38,6 +41,9 @@ class PostCommandServiceTest {
   @Mock
   private GcsSignedUrlService gcsSignedUrlService;
 
+  @Mock
+  private CurrentUserService currentUserService;
+
   private PostCommandService postCommandService;
 
   @BeforeEach
@@ -47,10 +53,11 @@ class PostCommandServiceTest {
         contextMasterRepository,
         gcsImageStorageService,
         gcsSignedUrlService,
-        DEFAULT_AUTHOR_ID
+        currentUserService
     );
 
     when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    lenient().when(currentUserService.requireCurrentUserId()).thenReturn(CURRENT_USER_ID);
   }
 
   @Test
