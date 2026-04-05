@@ -15,8 +15,11 @@ import com.giver.backend.post.entity.Post;
 import com.giver.backend.post.repository.PostRepository;
 import com.giver.backend.storage.GcsImageStorageService;
 import com.giver.backend.storage.GcsSignedUrlService;
+import com.giver.backend.user.entity.UserAccount;
+import com.giver.backend.user.repository.UserAccountRepository;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +47,9 @@ class PostCommandServiceTest {
   @Mock
   private CurrentUserService currentUserService;
 
+  @Mock
+  private UserAccountRepository userAccountRepository;
+
   private PostCommandService postCommandService;
 
   @BeforeEach
@@ -53,11 +59,14 @@ class PostCommandServiceTest {
         contextMasterRepository,
         gcsImageStorageService,
         gcsSignedUrlService,
-        currentUserService
+        currentUserService,
+        userAccountRepository
     );
 
     when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
     lenient().when(currentUserService.requireCurrentUserId()).thenReturn(CURRENT_USER_ID);
+    lenient().when(userAccountRepository.findById(CURRENT_USER_ID))
+        .thenReturn(Optional.of(new UserAccount("firebase-uid", "Test User", "test@example.com", null)));
   }
 
   @Test

@@ -3,8 +3,10 @@ package com.giver.backend.user.controller;
 import com.giver.backend.auth.CurrentUserService;
 import com.giver.backend.post.dto.response.PostSummaryResponse;
 import com.giver.backend.post.service.PostQueryService;
+import com.giver.backend.user.dto.FollowOverviewResponse;
 import com.giver.backend.user.dto.UpdateProfileRequest;
 import com.giver.backend.user.dto.UserProfileResponse;
+import com.giver.backend.user.service.FollowService;
 import com.giver.backend.user.service.UserAccountService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -23,15 +25,18 @@ public class MeController {
   private final CurrentUserService currentUserService;
   private final UserAccountService userAccountService;
   private final PostQueryService postQueryService;
+  private final FollowService followService;
 
   public MeController(
       CurrentUserService currentUserService,
       UserAccountService userAccountService,
-      PostQueryService postQueryService
+      PostQueryService postQueryService,
+      FollowService followService
   ) {
     this.currentUserService = currentUserService;
     this.userAccountService = userAccountService;
     this.postQueryService = postQueryService;
+    this.followService = followService;
   }
 
   @GetMapping("/profile")
@@ -51,5 +56,10 @@ public class MeController {
       @RequestParam(value = "size", required = false) Integer size
   ) {
     return ResponseEntity.ok(postQueryService.findMyPosts(currentUserService.requireCurrentUserId(), page, size));
+  }
+
+  @GetMapping("/follows")
+  public ResponseEntity<FollowOverviewResponse> follows() {
+    return ResponseEntity.ok(followService.getOverview(currentUserService.requireCurrentUserId()));
   }
 }

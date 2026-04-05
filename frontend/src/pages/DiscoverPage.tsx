@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { fetchMyFollows } from "../api/authApi";
 import { fetchPosts, type PostSummaryResponse } from "../api/postApi";
+import { useAuth } from "../features/auth/useAuth";
 import { PostCard } from "../features/posts/PostCard";
 import { toFeedPost, toProfileSummary } from "../features/posts/postMappers";
 import { FollowUserCard } from "../features/users/FollowUserCard";
@@ -9,8 +11,10 @@ import { StatePanel } from "../shared/ui/StatePanel";
 import type { Post, User } from "../types/models";
 
 export function DiscoverPage() {
+  const { isAuthenticated, profile } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [rawPosts, setRawPosts] = useState<PostSummaryResponse[]>([]);
+  const [followedUserIds, setFollowedUserIds] = useState<string[]>([]);
   const [selectedTag, setSelectedTag] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -21,9 +25,13 @@ export function DiscoverPage() {
         setIsLoading(true);
         setErrorMessage("");
 
-        const page = await fetchPosts("PUBLIC", 0, 30);
+        const [page, followOverview] = await Promise.all([
+          fetchPosts("PUBLIC", 0, 30),
+          isAuthenticated ? fetchMyFollows() : Promise.resolve(null),
+        ]);
         setRawPosts(page.content);
         setPosts(page.content.map((post) => toFeedPost(post)));
+        setFollowedUserIds(followOverview?.followingUsers.map((user) => user.id) ?? []);
       } catch (error) {
         setErrorMessage(error instanceof Error ? error.message : "投稿の取得に失敗しました。");
       } finally {
@@ -32,7 +40,7 @@ export function DiscoverPage() {
     };
 
     load();
-  }, []);
+  }, [isAuthenticated]);
 
   const topTags = useMemo(() => {
     const countByTag = new Map<string, number>();
@@ -57,9 +65,16 @@ export function DiscoverPage() {
 
   const users = useMemo<User[]>(() => {
     const seen = new Set<string>();
+    const followed = new Set(followedUserIds);
 
     return rawPosts
       .filter((post) => {
+        if (profile && post.authorId === profile.id) {
+          return false;
+        }
+        if (followed.has(post.authorId)) {
+          return false;
+        }
         if (seen.has(post.authorId)) {
           return false;
         }
@@ -68,7 +83,12 @@ export function DiscoverPage() {
       })
       .slice(0, 5)
       .map((post) => {
-        const profile = toProfileSummary(post.authorId, post.contexts);
+        const profile = toProfileSummary(
+          post.authorId,
+          post.authorDisplayName,
+          post.authorPhotoUrl,
+          post.contexts,
+        );
         return {
           id: profile.id,
           name: profile.name,
@@ -78,7 +98,7 @@ export function DiscoverPage() {
           joinedAt: profile.joinedAt,
         };
       });
-  }, [rawPosts]);
+  }, [rawPosts, followedUserIds, profile]);
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">

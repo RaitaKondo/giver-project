@@ -13,6 +13,8 @@ import com.giver.backend.post.dto.response.PostResponse;
 import com.giver.backend.post.repository.PostRepository;
 import com.giver.backend.storage.GcsImageStorageService;
 import com.giver.backend.storage.GcsSignedUrlService;
+import com.giver.backend.user.entity.UserAccount;
+import com.giver.backend.user.repository.UserAccountRepository;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -40,19 +42,22 @@ public class PostCommandService {
   private final GcsImageStorageService gcsImageStorageService;
   private final GcsSignedUrlService gcsSignedUrlService;
   private final CurrentUserService currentUserService;
+  private final UserAccountRepository userAccountRepository;
 
   public PostCommandService(
       PostRepository postRepository,
       ContextMasterRepository contextMasterRepository,
       GcsImageStorageService gcsImageStorageService,
       GcsSignedUrlService gcsSignedUrlService,
-      CurrentUserService currentUserService
+      CurrentUserService currentUserService,
+      UserAccountRepository userAccountRepository
   ) {
     this.postRepository = postRepository;
     this.contextMasterRepository = contextMasterRepository;
     this.gcsImageStorageService = gcsImageStorageService;
     this.gcsSignedUrlService = gcsSignedUrlService;
     this.currentUserService = currentUserService;
+    this.userAccountRepository = userAccountRepository;
   }
 
   @Transactional
@@ -170,6 +175,8 @@ public class PostCommandService {
   }
 
   private PostResponse toResponse(Post post) {
+    final UserAccount author = userAccountRepository.findById(post.getAuthorId())
+        .orElseThrow(() -> new IllegalArgumentException("Author not found: " + post.getAuthorId()));
     final List<PostImageResponse> imageResponses = post.getImages().stream()
         .sorted(Comparator.comparingInt(PostImage::getSortOrder))
         .map(this::toImageResponse)
@@ -188,6 +195,8 @@ public class PostCommandService {
     return new PostResponse(
         post.getId(),
         post.getAuthorId(),
+        author.getDisplayName(),
+        author.getPhotoUrl(),
         post.getTitle(),
         post.getActionText(),
         post.getConflictText(),

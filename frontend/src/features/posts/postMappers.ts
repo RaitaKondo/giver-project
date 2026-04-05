@@ -15,7 +15,12 @@ export type ProfileSummary = {
 };
 
 export function toFeedPost(post: PostSummaryResponse): Post {
-  const profile = toProfileSummary(post.authorId, post.contexts);
+  const profile = toProfileSummary(
+    post.authorId,
+    post.authorDisplayName,
+    post.authorPhotoUrl,
+    post.contexts,
+  );
 
   return {
     id: post.id,
@@ -34,7 +39,12 @@ export function toFeedPost(post: PostSummaryResponse): Post {
 }
 
 export function toDetailPost(post: PostDetailResponse): Post {
-  const profile = toProfileSummary(post.authorId, post.contexts);
+  const profile = toProfileSummary(
+    post.authorId,
+    post.authorDisplayName,
+    post.authorPhotoUrl,
+    post.contexts,
+  );
 
   return {
     id: post.id,
@@ -53,15 +63,19 @@ export function toDetailPost(post: PostDetailResponse): Post {
   };
 }
 
-export function toProfileSummary(authorId: string, contexts: PostContextResponse[]): ProfileSummary {
-  const shortId = authorId.slice(0, 8);
+export function toProfileSummary(
+  authorId: string,
+  displayName: string | null | undefined,
+  photoUrl: string | null | undefined,
+  contexts: PostContextResponse[],
+): ProfileSummary {
   const expertise = contexts.slice(0, 3).map((context) => context.name);
 
   return {
     id: authorId,
-    name: `ユーザー ${shortId}`,
-    avatar: `https://api.dicebear.com/9.x/shapes/svg?seed=${authorId}`,
-    bio: "認証機能の導入前につき、ユーザープロフィールは投稿データから暫定生成しています。",
+    name: displayName?.trim() || "ユーザー",
+    avatar: photoUrl?.trim() || `https://api.dicebear.com/9.x/shapes/svg?seed=${authorId}`,
+    bio: "投稿者プロフィールはアカウント情報をもとに表示しています。",
     joinedAt: "β版",
     expertise: expertise.length > 0 ? expertise : ["コミュニティ投稿"],
   };

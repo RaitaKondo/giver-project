@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { fetchMyPosts } from "../api/authApi";
+import { fetchMyFollows, fetchMyPosts, type FollowOverviewResponse } from "../api/authApi";
 import { useAuth } from "../features/auth/useAuth";
 import { formatCreatedAt, toFeedPost } from "../features/posts/postMappers";
+import { FollowUserCard } from "../features/users/FollowUserCard";
 import { StatePanel } from "../shared/ui/StatePanel";
-import type { Post } from "../types/models";
+import type { Post, User } from "../types/models";
 
 export function DashboardPage() {
   const { profile } = useAuth();
   const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [followOverview, setFollowOverview] = useState<FollowOverviewResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -19,8 +21,12 @@ export function DashboardPage() {
         setIsLoading(true);
         setErrorMessage("");
 
-        const page = await fetchMyPosts(0, 100);
+        const [page, follows] = await Promise.all([
+          fetchMyPosts(0, 100),
+          fetchMyFollows(),
+        ]);
         setAllPosts(page.content.map((post) => toFeedPost(post)));
+        setFollowOverview(follows);
       } catch (error) {
         setErrorMessage(error instanceof Error ? error.message : "ダッシュボードの取得に失敗しました。");
       } finally {
@@ -32,6 +38,14 @@ export function DashboardPage() {
   }, []);
 
   const myPosts = allPosts;
+  const followingUsers = useMemo<User[]>(
+    () => (followOverview?.followingUsers ?? []).map(toDashboardUser),
+    [followOverview],
+  );
+  const followerUsers = useMemo<User[]>(
+    () => (followOverview?.followerUsers ?? []).map(toDashboardUser),
+    [followOverview],
+  );
 
   const stats = useMemo(() => {
     const uniqueTags = new Set(myPosts.flatMap((post) => post.tags));
@@ -40,10 +54,10 @@ export function DashboardPage() {
     return [
       ["総投稿数", String(myPosts.length), `${recentPosts}件 / 30日`],
       ["よく使う文脈", String(uniqueTags.size), "タグ数"],
-      ["画像付き投稿", String(myPosts.filter((post) => Boolean(post.image)).length), "全公開範囲"],
-      ["ログイン名", profile?.displayName ?? "-", "認証ユーザー"],
+      ["フォロー中", String(followOverview?.followingCount ?? 0), "アカウント"],
+      ["フォロワー", String(followOverview?.followerCount ?? 0), "アカウント"],
     ] as const;
-  }, [myPosts, profile?.displayName]);
+  }, [myPosts, followOverview]);
 
   const topTags = useMemo(() => {
     const counts = new Map<string, number>();
@@ -111,8 +125,38 @@ export function DashboardPage() {
               <h3 className="mb-4 text-lg font-bold">今月のメモ</h3>
               <div className="space-y-4 text-sm text-slate-600">
                 <p>ログイン中ユーザーの投稿だけを表示しています。</p>
-                <p>フォロー・保存の詳細表示は次の拡張で追加しやすい構成にしています。</p>
+                <p>ログイン名: {profile?.displayName ?? "-"}</p>
                 <p>プロフィール編集はヘッダーの「プロフィール編集」から開けます。</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <h3 className="text-lg font-bold">フォロー中</h3>
+                <span className="text-sm font-semibold text-slate-500">{followOverview?.followingCount ?? 0}人</span>
+              </div>
+              <div className="space-y-3">
+                {followingUsers.length > 0 ? (
+                  followingUsers.map((user) => <FollowUserCard key={`following-${user.id}`} user={user} />)
+                ) : (
+                  <StatePanel message="まだ誰もフォローしていません。" />
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <h3 className="text-lg font-bold">フォロワー</h3>
+                <span className="text-sm font-semibold text-slate-500">{followOverview?.followerCount ?? 0}人</span>
+              </div>
+              <div className="space-y-3">
+                {followerUsers.length > 0 ? (
+                  followerUsers.map((user) => <FollowUserCard key={`follower-${user.id}`} user={user} />)
+                ) : (
+                  <StatePanel message="まだフォロワーはいません。" />
+                )}
               </div>
             </div>
           </section>
@@ -150,6 +194,18 @@ export function DashboardPage() {
       ) : null}
     </div>
   );
+}
+
+function toDashboardUser(user: FollowOverviewResponse["followingUsers"][number]): User {
+  return {
+    id: user.id,
+    name: user.displayName,
+    avatar: user.photoUrl?.trim() || `https://api.dicebear.com/9.x/shapes/svg?seed=${user.id}`,
+    bio: user.email || "プロフィール詳細はユーザーページから確認できます。",
+    expertise: [user.email || "コミュニティメンバー"],
+    joinedAt: "フォロー関係",
+    isFollowing: user.following,
+  };
 }
 
 function isInLastDays(value: string, days: number): boolean {

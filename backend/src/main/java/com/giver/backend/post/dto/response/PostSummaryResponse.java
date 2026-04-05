@@ -9,6 +9,8 @@ import com.giver.backend.context.dto.PostContextResponse;
 public record PostSummaryResponse(
     UUID id,
     UUID authorId,
+    String authorDisplayName,
+    String authorPhotoUrl,
     String title,
     String actionTextPreview,
     String changeText,

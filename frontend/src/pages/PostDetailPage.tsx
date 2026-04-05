@@ -10,7 +10,7 @@ import { StatePanel } from "../shared/ui/StatePanel";
 export function PostDetailPage() {
   const navigate = useNavigate();
   const { id = "" } = useParams();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, profile: currentProfile } = useAuth();
   const [post, setPost] = useState<PostDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -42,9 +42,19 @@ export function PostDetailPage() {
   }, [id]);
 
   const profile = useMemo(
-    () => (post ? toProfileSummary(post.authorId, post.contexts) : null),
+    () => (
+      post
+        ? toProfileSummary(
+            post.authorId,
+            post.authorDisplayName,
+            post.authorPhotoUrl,
+            post.contexts,
+          )
+        : null
+    ),
     [post],
   );
+  const isOwnPost = Boolean(post && currentProfile && post.authorId === currentProfile.id);
 
   const requireLogin = () => {
     if (isAuthenticated) {
@@ -138,14 +148,16 @@ export function PostDetailPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            className="rounded-lg bg-primary px-6 py-2.5 font-bold text-white transition-colors hover:bg-primary/90 disabled:opacity-60"
-            disabled={isSubmitting === "follow"}
-            type="button"
-            onClick={handleFollowToggle}
-          >
-            {isFollowing ? "フォロー中" : "フォロー"}
-          </button>
+          {!isOwnPost ? (
+            <button
+              className="rounded-lg bg-primary px-6 py-2.5 font-bold text-white transition-colors hover:bg-primary/90 disabled:opacity-60"
+              disabled={isSubmitting === "follow"}
+              type="button"
+              onClick={handleFollowToggle}
+            >
+              {isFollowing ? "フォロー中" : "フォロー"}
+            </button>
+          ) : null}
           <button
             className="rounded-lg border border-slate-200 p-2.5 transition-colors hover:border-primary hover:text-primary disabled:opacity-60"
             disabled={isSubmitting === "bookmark"}

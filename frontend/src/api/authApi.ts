@@ -16,6 +16,21 @@ export type UpdateProfileRequest = {
   photoUrl: string | null;
 };
 
+export type FollowUserResponse = {
+  id: string;
+  displayName: string;
+  email: string | null;
+  photoUrl: string | null;
+  following: boolean;
+};
+
+export type FollowOverviewResponse = {
+  followingCount: number;
+  followerCount: number;
+  followingUsers: FollowUserResponse[];
+  followerUsers: FollowUserResponse[];
+};
+
 export const fetchCurrentUser = async (): Promise<UserProfileResponse> => {
   return apiGet<UserProfileResponse>("/api/auth/me");
 };
@@ -35,6 +50,10 @@ export const fetchMyPosts = async (
   size = 20,
 ): Promise<PageResponse<PostSummaryResponse>> => {
   return apiGet<PageResponse<PostSummaryResponse>>(`/api/me/posts?page=${page}&size=${size}`);
+};
+
+export const fetchMyFollows = async (): Promise<FollowOverviewResponse> => {
+  return apiGet<FollowOverviewResponse>("/api/me/follows");
 };
 
 export const fetchUserProfile = async (userId: string): Promise<UserProfileResponse> => {

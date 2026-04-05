@@ -56,6 +56,8 @@ class PostControllerTest {
     final PostResponse response = new PostResponse(
         postId,
         UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        "Test User",
+        null,
         "title",
         "action",
         "conflict",
@@ -148,6 +150,8 @@ class PostControllerTest {
     final PostResponse response = new PostResponse(
         postId,
         UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        "Test User",
+        null,
         "title",
         "action",
         null,
@@ -170,6 +174,8 @@ class PostControllerTest {
             new PostSummaryResponse(
                 UUID.randomUUID(),
                 UUID.fromString("00000000-0000-0000-0000-000000000001"),
+                "Test User",
+                null,
                 "title",
                 "preview",
                 "change",
