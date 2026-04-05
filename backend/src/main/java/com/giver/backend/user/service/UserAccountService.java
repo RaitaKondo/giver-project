@@ -40,7 +40,7 @@ public class UserAccountService {
     return userAccountRepository.findByFirebaseUid(command.firebaseUid())
         .map(existing -> {
           existing.updateProfile(
-              normalizeDisplayName(command.displayName(), command.firebaseUid(), command.email()),
+              resolveDisplayNameForExistingUser(existing, command),
               normalizeNullable(command.email()),
               normalizeNullable(command.photoUrl())
           );
@@ -119,6 +119,13 @@ public class UserAccountService {
 
   private String normalizeNullable(String value) {
     return StringUtils.hasText(value) ? value.trim() : null;
+  }
+
+  private String resolveDisplayNameForExistingUser(UserAccount existing, UpsertUserCommand command) {
+    if (StringUtils.hasText(existing.getDisplayName())) {
+      return existing.getDisplayName().trim();
+    }
+    return normalizeDisplayName(command.displayName(), command.firebaseUid(), command.email());
   }
 
   private void validateProfileImage(MultipartFile image) {

@@ -96,4 +96,45 @@ class UserAccountServiceTest {
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Only image/* content type is allowed.");
   }
+
+  @Test
+  void upsertFromFirebase_keepsExistingDisplayName() {
+    final UserAccount existingUser = new UserAccount(
+        "firebase-uid",
+        "Local Display Name",
+        "local@example.com",
+        null
+    );
+
+    when(userAccountRepository.findByFirebaseUid("firebase-uid")).thenReturn(Optional.of(existingUser));
+
+    final UserAccount upserted = userAccountService.upsertFromFirebase(
+        new UserAccountService.UpsertUserCommand(
+            "firebase-uid",
+            "Firebase Token Name",
+            "firebase@example.com",
+            "https://firebase.example/avatar.png"
+        )
+    );
+
+    assertThat(upserted.getDisplayName()).isEqualTo("Local Display Name");
+    assertThat(upserted.getEmail()).isEqualTo("firebase@example.com");
+  }
+
+  @Test
+  void upsertFromFirebase_setsDisplayNameForNewUserFromFirebaseToken() {
+    when(userAccountRepository.findByFirebaseUid("firebase-new")).thenReturn(Optional.empty());
+    when(userAccountRepository.save(any(UserAccount.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    final UserAccount created = userAccountService.upsertFromFirebase(
+        new UserAccountService.UpsertUserCommand(
+            "firebase-new",
+            "Firebase Name",
+            "firebase@example.com",
+            null
+        )
+    );
+
+    assertThat(created.getDisplayName()).isEqualTo("Firebase Name");
+  }
 }
