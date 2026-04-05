@@ -10,6 +10,8 @@ import com.giver.backend.post.dto.response.PostResponse;
 import com.giver.backend.post.dto.response.PostSummaryResponse;
 import com.giver.backend.post.repository.PostRepository;
 import com.giver.backend.storage.GcsSignedUrlService;
+import com.giver.backend.user.entity.UserAccount;
+import com.giver.backend.user.repository.UserAccountRepository;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -32,13 +34,16 @@ public class PostQueryService {
 
   private final PostRepository postRepository;
   private final GcsSignedUrlService gcsSignedUrlService;
+  private final UserAccountRepository userAccountRepository;
 
   public PostQueryService(
       PostRepository postRepository,
-      GcsSignedUrlService gcsSignedUrlService
+      GcsSignedUrlService gcsSignedUrlService,
+      UserAccountRepository userAccountRepository
   ) {
     this.postRepository = postRepository;
     this.gcsSignedUrlService = gcsSignedUrlService;
+    this.userAccountRepository = userAccountRepository;
   }
 
   public PostResponse findById(UUID postId) {
@@ -115,6 +120,7 @@ public class PostQueryService {
   }
 
   private PostResponse toPostResponse(Post post) {
+    final UserAccount author = requireAuthor(post);
     final List<PostImageResponse> images = post.getImages().stream()
         .sorted(Comparator.comparingInt(PostImage::getSortOrder))
         .map(this::toImageResponse)
@@ -124,6 +130,8 @@ public class PostQueryService {
     return new PostResponse(
         post.getId(),
         post.getAuthorId(),
+        author.getDisplayName(),
+        author.getPhotoUrl(),
         post.getTitle(),
         post.getActionText(),
         post.getConflictText(),
@@ -136,6 +144,7 @@ public class PostQueryService {
   }
 
   private PostSummaryResponse toSummaryResponse(Post post) {
+    final UserAccount author = requireAuthor(post);
     final String thumbnailUrl = post.getImages().stream()
         .min(Comparator.comparingInt(PostImage::getSortOrder))
         .map(PostImage::getObjectName)
@@ -147,6 +156,8 @@ public class PostQueryService {
     return new PostSummaryResponse(
         post.getId(),
         post.getAuthorId(),
+        author.getDisplayName(),
+        author.getPhotoUrl(),
         post.getTitle(),
         toActionTextPreview(post.getActionText()),
         post.getChangeText(),
@@ -183,5 +194,10 @@ public class PostQueryService {
             postContext.getContextMaster().getCategory()
         ))
         .toList();
+  }
+
+  private UserAccount requireAuthor(Post post) {
+    return userAccountRepository.findById(post.getAuthorId())
+        .orElseThrow(() -> new NoSuchElementException("Author not found: " + post.getAuthorId()));
   }
 }

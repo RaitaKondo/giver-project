@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { fetchMyFollows } from "../api/authApi";
 import { fetchPosts } from "../api/postApi";
+import { useAuth } from "../features/auth/useAuth";
 import { PostCard } from "../features/posts/PostCard";
 import { toFeedPost, toProfileSummary } from "../features/posts/postMappers";
 import { FollowUserCard } from "../features/users/FollowUserCard";
@@ -8,7 +10,9 @@ import { StatePanel } from "../shared/ui/StatePanel";
 import type { Post, User } from "../types/models";
 
 export function FeedPage() {
+  const { isAuthenticated, profile } = useAuth();
   const [feedPosts, setFeedPosts] = useState<Post[]>([]);
+  const [followedUserIds, setFollowedUserIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -18,8 +22,12 @@ export function FeedPage() {
         setIsLoading(true);
         setErrorMessage("");
 
-        const data = await fetchPosts();
+        const [data, followOverview] = await Promise.all([
+          fetchPosts(),
+          isAuthenticated ? fetchMyFollows() : Promise.resolve(null),
+        ]);
         setFeedPosts(data.content.map((post) => toFeedPost(post)));
+        setFollowedUserIds(followOverview?.followingUsers.map((user) => user.id) ?? []);
       } catch (error) {
         setErrorMessage(error instanceof Error ? error.message : "投稿の取得に失敗しました。");
       } finally {
@@ -28,13 +36,20 @@ export function FeedPage() {
     };
 
     load();
-  }, []);
+  }, [isAuthenticated]);
 
   const recommendedUsers = useMemo<User[]>(() => {
     const seen = new Set<string>();
+    const followed = new Set(followedUserIds);
 
     return feedPosts
       .filter((post) => {
+        if (profile && post.authorId === profile.id) {
+          return false;
+        }
+        if (followed.has(post.authorId)) {
+          return false;
+        }
         if (seen.has(post.authorId)) {
           return false;
         }
@@ -43,7 +58,12 @@ export function FeedPage() {
       })
       .slice(0, 5)
       .map((post) => {
-        const profile = toProfileSummary(post.authorId, []);
+        const profile = toProfileSummary(
+          post.authorId,
+          post.authorName,
+          post.authorAvatar,
+          [],
+        );
         return {
           id: profile.id,
           name: profile.name,
@@ -53,7 +73,7 @@ export function FeedPage() {
           joinedAt: profile.joinedAt,
         };
       });
-  }, [feedPosts]);
+  }, [feedPosts, followedUserIds, profile]);
 
   return (
     <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-12 lg:px-8">

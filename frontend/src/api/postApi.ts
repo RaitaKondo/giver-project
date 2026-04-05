@@ -20,6 +20,8 @@ export type PostContextResponse = {
 export type PostSummaryResponse = {
   id: string;
   authorId: string;
+  authorDisplayName: string;
+  authorPhotoUrl: string | null;
   title: string | null;
   actionTextPreview: string;
   changeText: string | null;
@@ -49,6 +51,8 @@ export type CreatePostRequest = {
 export type CreatePostResponse = {
   id: string;
   authorId: string;
+  authorDisplayName: string;
+  authorPhotoUrl: string | null;
   title: string | null;
   actionText: string;
   conflictText: string | null;
@@ -66,6 +70,8 @@ export type CreatePostResponse = {
 export type PostDetailResponse = {
   id: string;
   authorId: string;
+  authorDisplayName: string;
+  authorPhotoUrl: string | null;
   title: string | null;
   actionText: string;
   conflictText: string | null;
