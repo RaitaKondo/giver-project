@@ -29,6 +29,9 @@ public class UserAccount {
   @Column(name = "photo_url")
   private String photoUrl;
 
+  @Column(name = "profile_photo_object_name")
+  private String profilePhotoObjectName;
+
   @Column(name = "created_at", nullable = false, updatable = false)
   private OffsetDateTime createdAt;
 
@@ -39,11 +42,22 @@ public class UserAccount {
   }
 
   public UserAccount(String firebaseUid, String displayName, String email, String photoUrl) {
+    this(firebaseUid, displayName, email, photoUrl, null);
+  }
+
+  public UserAccount(
+      String firebaseUid,
+      String displayName,
+      String email,
+      String photoUrl,
+      String profilePhotoObjectName
+  ) {
     this.id = UUID.randomUUID();
     this.firebaseUid = firebaseUid;
     this.displayName = displayName;
     this.email = email;
     this.photoUrl = photoUrl;
+    this.profilePhotoObjectName = profilePhotoObjectName;
   }
 
   @PrePersist
@@ -68,6 +82,10 @@ public class UserAccount {
     this.photoUrl = photoUrl;
   }
 
+  public void updateProfilePhotoObjectName(String profilePhotoObjectName) {
+    this.profilePhotoObjectName = profilePhotoObjectName;
+  }
+
   public UUID getId() {
     return id;
   }
@@ -86,6 +104,10 @@ public class UserAccount {
 
   public String getPhotoUrl() {
     return photoUrl;
+  }
+
+  public String getProfilePhotoObjectName() {
+    return profilePhotoObjectName;
   }
 
   public OffsetDateTime getCreatedAt() {

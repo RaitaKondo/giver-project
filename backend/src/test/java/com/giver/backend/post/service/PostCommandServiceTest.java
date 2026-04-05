@@ -17,6 +17,7 @@ import com.giver.backend.storage.GcsImageStorageService;
 import com.giver.backend.storage.GcsSignedUrlService;
 import com.giver.backend.user.entity.UserAccount;
 import com.giver.backend.user.repository.UserAccountRepository;
+import com.giver.backend.user.service.UserPhotoUrlResolver;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,9 @@ class PostCommandServiceTest {
   @Mock
   private UserAccountRepository userAccountRepository;
 
+  @Mock
+  private UserPhotoUrlResolver userPhotoUrlResolver;
+
   private PostCommandService postCommandService;
 
   @BeforeEach
@@ -60,13 +64,15 @@ class PostCommandServiceTest {
         gcsImageStorageService,
         gcsSignedUrlService,
         currentUserService,
-        userAccountRepository
+        userAccountRepository,
+        userPhotoUrlResolver
     );
 
     when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
     lenient().when(currentUserService.requireCurrentUserId()).thenReturn(CURRENT_USER_ID);
     lenient().when(userAccountRepository.findById(CURRENT_USER_ID))
         .thenReturn(Optional.of(new UserAccount("firebase-uid", "Test User", "test@example.com", null)));
+    lenient().when(userPhotoUrlResolver.resolve(any(UserAccount.class))).thenReturn(null);
   }
 
   @Test

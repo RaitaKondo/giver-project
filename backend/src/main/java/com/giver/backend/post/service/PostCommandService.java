@@ -15,6 +15,7 @@ import com.giver.backend.storage.GcsImageStorageService;
 import com.giver.backend.storage.GcsSignedUrlService;
 import com.giver.backend.user.entity.UserAccount;
 import com.giver.backend.user.repository.UserAccountRepository;
+import com.giver.backend.user.service.UserPhotoUrlResolver;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -43,6 +44,7 @@ public class PostCommandService {
   private final GcsSignedUrlService gcsSignedUrlService;
   private final CurrentUserService currentUserService;
   private final UserAccountRepository userAccountRepository;
+  private final UserPhotoUrlResolver userPhotoUrlResolver;
 
   public PostCommandService(
       PostRepository postRepository,
@@ -50,7 +52,8 @@ public class PostCommandService {
       GcsImageStorageService gcsImageStorageService,
       GcsSignedUrlService gcsSignedUrlService,
       CurrentUserService currentUserService,
-      UserAccountRepository userAccountRepository
+      UserAccountRepository userAccountRepository,
+      UserPhotoUrlResolver userPhotoUrlResolver
   ) {
     this.postRepository = postRepository;
     this.contextMasterRepository = contextMasterRepository;
@@ -58,6 +61,7 @@ public class PostCommandService {
     this.gcsSignedUrlService = gcsSignedUrlService;
     this.currentUserService = currentUserService;
     this.userAccountRepository = userAccountRepository;
+    this.userPhotoUrlResolver = userPhotoUrlResolver;
   }
 
   @Transactional
@@ -196,7 +200,7 @@ public class PostCommandService {
         post.getId(),
         post.getAuthorId(),
         author.getDisplayName(),
-        author.getPhotoUrl(),
+        userPhotoUrlResolver.resolve(author),
         post.getTitle(),
         post.getActionText(),
         post.getConflictText(),

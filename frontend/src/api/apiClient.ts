@@ -97,6 +97,26 @@ export async function apiPatchJson<T>(
   return response.json() as Promise<T>;
 }
 
+export async function apiPatchFormData<T>(
+  path: string,
+  body: FormData,
+  init?: RequestInit,
+): Promise<T> {
+  const response = await fetch(buildUrl(path), {
+    ...init,
+    method: "PATCH",
+    body,
+    headers: await buildAuthHeaders(init?.headers),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => null as ApiErrorBody | null);
+    throw new Error(errorBody?.message ?? "API リクエストに失敗しました。");
+  }
+
+  return response.json() as Promise<T>;
+}
+
 export async function apiDelete(path: string, init?: RequestInit): Promise<void> {
   const response = await fetch(buildUrl(path), {
     ...init,
