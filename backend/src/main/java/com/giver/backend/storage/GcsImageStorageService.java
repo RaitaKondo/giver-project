@@ -30,8 +30,16 @@ public class GcsImageStorageService {
   }
 
   public StoredObject storePostImage(UUID postId, MultipartFile file) {
+    return storeImage("posts/%s".formatted(postId), file);
+  }
+
+  public StoredObject storeProfileImage(UUID userId, MultipartFile file) {
+    return storeImage("users/%s/profile".formatted(userId), file);
+  }
+
+  private StoredObject storeImage(String prefix, MultipartFile file) {
     try {
-      final String objectName = buildObjectName(postId, file.getOriginalFilename());
+      final String objectName = buildObjectName(prefix, file.getOriginalFilename());
       if (!gcsEnabled) {
         // GCS 未設定時は DB 参照用 objectName だけ発行し、画像アップロードは行わない。
         return new StoredObject("", objectName, file.getContentType());
@@ -49,9 +57,9 @@ public class GcsImageStorageService {
     }
   }
 
-  private String buildObjectName(UUID postId, String originalFilename) {
+  private String buildObjectName(String prefix, String originalFilename) {
     final String extension = extractExtension(originalFilename);
-    return "posts/%s/%s%s".formatted(postId, UUID.randomUUID(), extension);
+    return "%s/%s%s".formatted(prefix, UUID.randomUUID(), extension);
   }
 
   private String extractExtension(String filename) {

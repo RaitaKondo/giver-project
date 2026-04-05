@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
-import { fetchMyFollows } from "../api/authApi";
-import { fetchPosts } from "../api/postApi";
+import { fetchMyFeed, fetchMyFollows } from "../api/authApi";
 import { useAuth } from "../features/auth/useAuth";
 import { PostCard } from "../features/posts/PostCard";
 import { toFeedPost, toProfileSummary } from "../features/posts/postMappers";
@@ -17,14 +17,22 @@ export function FeedPage() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setFeedPosts([]);
+      setFollowedUserIds([]);
+      setErrorMessage("");
+      setIsLoading(false);
+      return;
+    }
+
     const load = async () => {
       try {
         setIsLoading(true);
         setErrorMessage("");
 
         const [data, followOverview] = await Promise.all([
-          fetchPosts(),
-          isAuthenticated ? fetchMyFollows() : Promise.resolve(null),
+          fetchMyFeed(),
+          fetchMyFollows(),
         ]);
         setFeedPosts(data.content.map((post) => toFeedPost(post)));
         setFollowedUserIds(followOverview?.followingUsers.map((user) => user.id) ?? []);
@@ -91,11 +99,23 @@ export function FeedPage() {
       <section className="space-y-6 lg:col-span-6">
         {isLoading ? <StatePanel message="投稿を読み込み中です..." /> : null}
 
+        {!isLoading && !isAuthenticated ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+            フィードは、フォローしているアカウントの投稿だけを表示します。
+            <Link className="ml-1 font-bold text-primary hover:underline" to="/login?redirect=%2Ffeed">
+              ログイン
+            </Link>
+            して続けてください。
+          </div>
+        ) : null}
+
         {!isLoading && errorMessage ? <StatePanel message={errorMessage} tone="error" /> : null}
 
-        {!isLoading && !errorMessage && feedPosts.length === 0 ? <StatePanel message="まだ投稿がありません。" /> : null}
+        {!isLoading && isAuthenticated && !errorMessage && feedPosts.length === 0 ? (
+          <StatePanel message="まだフォロー中ユーザーの投稿がありません。" />
+        ) : null}
 
-        {!isLoading && !errorMessage
+        {!isLoading && isAuthenticated && !errorMessage
           ? feedPosts.map((post) => <PostCard key={post.id} post={post} />)
           : null}
       </section>
@@ -109,9 +129,9 @@ export function FeedPage() {
         </div>
         <div className="space-y-3">
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">おすすめユーザー</h3>
-          {recommendedUsers.length > 0
+          {isAuthenticated && recommendedUsers.length > 0
             ? recommendedUsers.map((user) => <FollowUserCard key={user.id} user={user} />)
-            : <StatePanel message="投稿データが増えると、おすすめユーザーが表示されます。" />}
+            : <StatePanel message={isAuthenticated ? "フォロー候補のユーザーがいません。" : "ログインするとおすすめユーザーを表示します。"} />}
         </div>
       </aside>
     </div>

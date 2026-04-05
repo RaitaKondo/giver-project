@@ -17,13 +17,16 @@ public class FollowService {
 
   private final FollowRepository followRepository;
   private final UserAccountRepository userAccountRepository;
+  private final UserPhotoUrlResolver userPhotoUrlResolver;
 
   public FollowService(
       FollowRepository followRepository,
-      UserAccountRepository userAccountRepository
+      UserAccountRepository userAccountRepository,
+      UserPhotoUrlResolver userPhotoUrlResolver
   ) {
     this.followRepository = followRepository;
     this.userAccountRepository = userAccountRepository;
+    this.userPhotoUrlResolver = userPhotoUrlResolver;
   }
 
   @Transactional
@@ -60,12 +63,19 @@ public class FollowService {
     return new FollowOverviewResponse(followingCount, followerCount, followingUsers, followerUsers);
   }
 
+  @Transactional(readOnly = true)
+  public List<UUID> getFolloweeIds(UUID currentUserId) {
+    return followRepository.findFolloweesByFollowerId(currentUserId).stream()
+        .map(UserAccount::getId)
+        .toList();
+  }
+
   private FollowUserResponse toResponse(UserAccount user, boolean following) {
     return new FollowUserResponse(
         user.getId(),
         user.getDisplayName(),
         user.getEmail(),
-        user.getPhotoUrl(),
+        userPhotoUrlResolver.resolve(user),
         following
     );
   }

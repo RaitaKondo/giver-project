@@ -1,6 +1,7 @@
 package com.giver.backend.post.repository;
 
 import com.giver.backend.post.entity.Post;
+import java.util.Collection;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,4 +27,7 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
 
   @EntityGraph(attributePaths = "images")
   Page<Post> findByAuthorIdAndVisibility(UUID authorId, String visibility, Pageable pageable);
+
+  @EntityGraph(attributePaths = "images")
+  Page<Post> findByAuthorIdInAndVisibilityIn(Collection<UUID> authorIds, Collection<String> visibilities, Pageable pageable);
 }

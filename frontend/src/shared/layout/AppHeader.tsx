@@ -54,12 +54,6 @@ export function AppHeader() {
                   マイプロフィール
                 </Link>
               ) : null}
-              <Link
-                className="hidden rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-primary hover:text-primary sm:inline-flex"
-                to="/me/profile"
-              >
-                プロフィール編集
-              </Link>
               <button
                 className="hidden rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-primary hover:text-primary sm:inline-flex"
                 type="button"

@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { bookmarkPost, followUser, removeBookmark, unfollowUser } from "../api/authApi";
+import {
+  bookmarkPost,
+  fetchUserProfile,
+  followUser,
+  removeBookmark,
+  unfollowUser,
+} from "../api/authApi";
 import { fetchPostById, type PostDetailResponse } from "../api/postApi";
 import { useAuth } from "../features/auth/useAuth";
 import { formatCreatedAt, toProfileSummary } from "../features/posts/postMappers";
@@ -31,6 +37,14 @@ export function PostDetailPage() {
         setErrorMessage("");
         const response = await fetchPostById(id);
         setPost(response);
+        setIsFollowing(false);
+        setIsBookmarked(false);
+
+        // Keep the follow button in sync with the backend relationship state.
+        if (isAuthenticated && currentProfile && response.authorId !== currentProfile.id) {
+          const authorProfile = await fetchUserProfile(response.authorId);
+          setIsFollowing(authorProfile.following);
+        }
       } catch (error) {
         setErrorMessage(error instanceof Error ? error.message : "投稿詳細の取得に失敗しました。");
       } finally {
@@ -39,7 +53,7 @@ export function PostDetailPage() {
     };
 
     load();
-  }, [id]);
+  }, [currentProfile, id, isAuthenticated]);
 
   const profile = useMemo(
     () => (

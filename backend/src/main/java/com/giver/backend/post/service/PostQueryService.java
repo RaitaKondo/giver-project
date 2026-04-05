@@ -12,7 +12,9 @@ import com.giver.backend.post.repository.PostRepository;
 import com.giver.backend.storage.GcsSignedUrlService;
 import com.giver.backend.user.entity.UserAccount;
 import com.giver.backend.user.repository.UserAccountRepository;
+import com.giver.backend.user.service.UserPhotoUrlResolver;
 import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -35,15 +37,18 @@ public class PostQueryService {
   private final PostRepository postRepository;
   private final GcsSignedUrlService gcsSignedUrlService;
   private final UserAccountRepository userAccountRepository;
+  private final UserPhotoUrlResolver userPhotoUrlResolver;
 
   public PostQueryService(
       PostRepository postRepository,
       GcsSignedUrlService gcsSignedUrlService,
-      UserAccountRepository userAccountRepository
+      UserAccountRepository userAccountRepository,
+      UserPhotoUrlResolver userPhotoUrlResolver
   ) {
     this.postRepository = postRepository;
     this.gcsSignedUrlService = gcsSignedUrlService;
     this.userAccountRepository = userAccountRepository;
+    this.userPhotoUrlResolver = userPhotoUrlResolver;
   }
 
   public PostResponse findById(UUID postId) {
@@ -97,6 +102,22 @@ public class PostQueryService {
     return postRepository.findByAuthorIdAndVisibility(authorId, "PUBLIC", pageable).map(this::toSummaryResponse);
   }
 
+  public Page<PostSummaryResponse> findFeedPosts(List<UUID> followeeIds, Integer page, Integer size) {
+    final Pageable pageable = PageRequest.of(
+        normalizePage(page),
+        normalizeSize(size),
+        Sort.by(Sort.Direction.DESC, "createdAt")
+    );
+    if (followeeIds == null || followeeIds.isEmpty()) {
+      return Page.empty(pageable);
+    }
+    return postRepository.findByAuthorIdInAndVisibilityIn(
+        followeeIds,
+        List.of("PUBLIC", "FOLLOWERS"),
+        pageable
+    ).map(this::toSummaryResponse);
+  }
+
   private String normalizeVisibilityFilter(String visibility) {
     if (visibility == null || visibility.isBlank()) {
       return null;
@@ -131,7 +152,7 @@ public class PostQueryService {
         post.getId(),
         post.getAuthorId(),
         author.getDisplayName(),
-        author.getPhotoUrl(),
+        userPhotoUrlResolver.resolve(author),
         post.getTitle(),
         post.getActionText(),
         post.getConflictText(),
@@ -157,7 +178,7 @@ public class PostQueryService {
         post.getId(),
         post.getAuthorId(),
         author.getDisplayName(),
-        author.getPhotoUrl(),
+        userPhotoUrlResolver.resolve(author),
         post.getTitle(),
         toActionTextPreview(post.getActionText()),
         post.getChangeText(),

@@ -1,4 +1,4 @@
-import { apiDelete, apiGet, apiPatchJson, apiPost } from "./apiClient";
+import { apiDelete, apiGet, apiPatchFormData, apiPatchJson, apiPost } from "./apiClient";
 import type { PageResponse, PostSummaryResponse } from "./postApi";
 
 export type UserProfileResponse = {
@@ -45,11 +45,24 @@ export const updateMyProfile = async (
   return apiPatchJson<UserProfileResponse>("/api/me/profile", request);
 };
 
+export const updateMyProfilePhoto = async (file: File): Promise<UserProfileResponse> => {
+  const formData = new FormData();
+  formData.append("image", file);
+  return apiPatchFormData<UserProfileResponse>("/api/me/profile/photo", formData);
+};
+
 export const fetchMyPosts = async (
   page = 0,
   size = 20,
 ): Promise<PageResponse<PostSummaryResponse>> => {
   return apiGet<PageResponse<PostSummaryResponse>>(`/api/me/posts?page=${page}&size=${size}`);
+};
+
+export const fetchMyFeed = async (
+  page = 0,
+  size = 20,
+): Promise<PageResponse<PostSummaryResponse>> => {
+  return apiGet<PageResponse<PostSummaryResponse>>(`/api/me/feed?page=${page}&size=${size}`);
 };
 
 export const fetchMyFollows = async (): Promise<FollowOverviewResponse> => {

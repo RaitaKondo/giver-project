@@ -1,5 +1,6 @@
 # Local reference documents kept in the repo root for later reuse.
 project-reference/
+project-refarence/
 
 # Temporary local tool caches created during verification.
 .gradle-tmp/
