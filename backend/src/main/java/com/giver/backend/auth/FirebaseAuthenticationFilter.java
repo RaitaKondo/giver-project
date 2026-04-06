@@ -78,9 +78,6 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
     if (StringUtils.hasText(firebaseToken.getName())) {
       return firebaseToken.getName().trim();
     }
-    if (StringUtils.hasText(firebaseToken.getEmail())) {
-      return firebaseToken.getEmail().split("@")[0];
-    }
-    return firebaseToken.getUid();
+    return "";
   }
 }

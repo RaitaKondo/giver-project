@@ -16,13 +16,10 @@ import com.giver.backend.storage.GcsSignedUrlService;
 import com.giver.backend.user.entity.UserAccount;
 import com.giver.backend.user.repository.UserAccountRepository;
 import com.giver.backend.user.service.UserPhotoUrlResolver;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -36,7 +33,6 @@ public class PostCommandService {
   private static final int MAX_IMAGES = 4;
   private static final long MAX_FILE_SIZE_BYTES = 5L * 1024L * 1024L;
   private static final String PUBLIC_VISIBILITY = "PUBLIC";
-  private static final Set<String> ALLOWED_VISIBILITIES = Set.of("PUBLIC", "FOLLOWERS", "PRIVATE");
 
   private final PostRepository postRepository;
   private final ContextMasterRepository contextMasterRepository;
@@ -81,7 +77,7 @@ public class PostCommandService {
         request.actionText(),
         request.conflictText(),
         request.changeText(),
-        normalizeVisibility(request.visibility())
+        normalizeVisibility()
     );
 
     // 処理順序の意図:
@@ -103,19 +99,9 @@ public class PostCommandService {
     return images == null ? List.of() : images;
   }
 
-  private String normalizeVisibility(String visibility) {
-    // visibility 正規化の意図:
-    // - 省略時の既定値を PUBLIC に固定しつつ、入力の大文字小文字の揺れを吸収する。
-    if (visibility == null || visibility.isBlank()) {
-      return PUBLIC_VISIBILITY;
-    }
-    final String normalized = visibility.trim().toUpperCase(Locale.ROOT);
-    if (!ALLOWED_VISIBILITIES.contains(normalized)) {
-      throw new IllegalArgumentException(
-          "visibility must be one of: " + Arrays.toString(ALLOWED_VISIBILITIES.toArray())
-      );
-    }
-    return normalized;
+  private String normalizeVisibility() {
+    // 投稿の公開範囲は常に PUBLIC 固定とする。
+    return PUBLIC_VISIBILITY;
   }
 
   private void validateImages(List<MultipartFile> images) {

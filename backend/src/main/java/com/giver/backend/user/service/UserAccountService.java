@@ -22,6 +22,7 @@ public class UserAccountService {
   private final UserPhotoUrlResolver userPhotoUrlResolver;
 
   private static final long MAX_PROFILE_PHOTO_SIZE_BYTES = 5L * 1024L * 1024L;
+  private static final int MAX_DISPLAY_NAME_LENGTH = 100;
 
   public UserAccountService(
       UserAccountRepository userAccountRepository,
@@ -48,7 +49,7 @@ public class UserAccountService {
         })
         .orElseGet(() -> userAccountRepository.save(new UserAccount(
             command.firebaseUid(),
-            normalizeDisplayName(command.displayName(), command.firebaseUid(), command.email()),
+            normalizeDisplayName(command.displayName()),
             normalizeNullable(command.email()),
             normalizeNullable(command.photoUrl())
         )));
@@ -76,8 +77,8 @@ public class UserAccountService {
         ? user.getPhotoUrl()
         : normalizeNullable(request.photoUrl());
     user.updateProfile(
-        normalizeDisplayName(request.displayName(), user.getFirebaseUid(), request.email()),
-        normalizeNullable(request.email()),
+        normalizeDisplayName(request.displayName()),
+        user.getEmail(),
         nextPhotoUrl
     );
     return toResponse(user, false);
@@ -107,14 +108,15 @@ public class UserAccountService {
     return userPhotoUrlResolver.resolve(user);
   }
 
-  private String normalizeDisplayName(String value, String firebaseUid, String email) {
-    if (StringUtils.hasText(value)) {
-      return value.trim();
+  private String normalizeDisplayName(String value) {
+    if (!StringUtils.hasText(value)) {
+      throw new IllegalArgumentException("displayName is required.");
     }
-    if (StringUtils.hasText(email)) {
-      return email.trim().split("@")[0];
+    final String normalized = value.trim();
+    if (normalized.length() > MAX_DISPLAY_NAME_LENGTH) {
+      throw new IllegalArgumentException("displayName must be <= 100 characters.");
     }
-    return firebaseUid;
+    return normalized;
   }
 
   private String normalizeNullable(String value) {
@@ -125,7 +127,7 @@ public class UserAccountService {
     if (StringUtils.hasText(existing.getDisplayName())) {
       return existing.getDisplayName().trim();
     }
-    return normalizeDisplayName(command.displayName(), command.firebaseUid(), command.email());
+    return normalizeDisplayName(command.displayName());
   }
 
   private void validateProfileImage(MultipartFile image) {

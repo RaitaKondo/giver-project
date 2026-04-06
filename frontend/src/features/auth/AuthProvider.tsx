@@ -22,6 +22,7 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+const MAX_DISPLAY_NAME_LENGTH = 100;
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
@@ -73,10 +74,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
   };
 
   const signUpWithEmail = async (email: string, password: string, displayName: string) => {
-    const credential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
-    if (displayName.trim()) {
-      await updateProfile(credential.user, { displayName: displayName.trim() });
+    const normalizedDisplayName = displayName.trim();
+    if (!normalizedDisplayName) {
+      throw new Error("表示名は必須です。");
     }
+    if (normalizedDisplayName.length > MAX_DISPLAY_NAME_LENGTH) {
+      throw new Error("表示名は100文字以内で入力してください。");
+    }
+
+    const credential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+    await updateProfile(credential.user, { displayName: normalizedDisplayName });
     await credential.user.getIdToken(true);
     await refreshProfile();
   };

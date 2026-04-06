@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.giver.backend.storage.GcsImageStorageService;
+import com.giver.backend.user.dto.UpdateProfileRequest;
 import com.giver.backend.user.dto.UserProfileResponse;
 import com.giver.backend.user.entity.UserAccount;
 import com.giver.backend.user.repository.FollowRepository;
@@ -136,5 +137,37 @@ class UserAccountServiceTest {
     );
 
     assertThat(created.getDisplayName()).isEqualTo("Firebase Name");
+  }
+
+  @Test
+  void upsertFromFirebase_throwsWhenNewUserDisplayNameIsBlank() {
+    when(userAccountRepository.findByFirebaseUid("firebase-new")).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> userAccountService.upsertFromFirebase(
+        new UserAccountService.UpsertUserCommand(
+            "firebase-new",
+            "   ",
+            "firebase@example.com",
+            null
+        )
+    ))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("displayName is required.");
+  }
+
+  @Test
+  void updateProfile_doesNotOverwriteEmailDirectly() {
+    final UserAccount user = new UserAccount("firebase-uid", "Before Name", "before@example.com", null);
+    when(userAccountRepository.findById(user.getId())).thenReturn(Optional.of(user));
+    when(userPhotoUrlResolver.resolve(user)).thenReturn(null);
+
+    final UserProfileResponse response = userAccountService.updateProfile(
+        user.getId(),
+        new UpdateProfileRequest("After Name", "changed@example.com", null)
+    );
+
+    assertThat(response.displayName()).isEqualTo("After Name");
+    assertThat(response.email()).isEqualTo("before@example.com");
+    assertThat(user.getEmail()).isEqualTo("before@example.com");
   }
 }
