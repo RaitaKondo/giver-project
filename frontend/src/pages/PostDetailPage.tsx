@@ -246,7 +246,6 @@ export function PostDetailPage() {
         ) : null}
       </article>
 
-      <footer className="mt-16 border-t border-slate-200 pt-8 text-sm text-slate-500">公開範囲: {post.visibility}</footer>
     </div>
   );
 }

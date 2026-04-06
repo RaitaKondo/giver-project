@@ -116,7 +116,7 @@ export function FeedPage() {
         ) : null}
 
         {!isLoading && isAuthenticated && !errorMessage
-          ? feedPosts.map((post) => <PostCard key={post.id} post={post} />)
+          ? feedPosts.map((post) => <PostCard key={post.id} post={post} showVisibility={false} />)
           : null}
       </section>
 

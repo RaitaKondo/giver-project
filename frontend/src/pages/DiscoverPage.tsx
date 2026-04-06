@@ -146,7 +146,7 @@ export function DiscoverPage() {
             <StatePanel message="条件に一致する投稿がありません。タグを切り替えて試してください。" />
           ) : null}
           {!isLoading && !errorMessage
-            ? visiblePosts.map((post) => <PostCard key={post.id} post={post} />)
+            ? visiblePosts.map((post) => <PostCard key={post.id} post={post} showVisibility={false} />)
             : null}
         </div>
         <aside className="space-y-4 lg:col-span-4">

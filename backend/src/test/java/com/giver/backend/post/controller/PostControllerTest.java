@@ -127,9 +127,22 @@ class PostControllerTest {
   }
 
   @Test
-  void createPost_returns400_whenVisibilityIsInvalid() throws Exception {
-    when(postCommandService.create(any(CreatePostRequest.class), any()))
-        .thenThrow(new IllegalArgumentException("Invalid visibility"));
+  void createPost_returns201_whenVisibilityIsInvalidBecauseServiceForcesPublic() throws Exception {
+    final PostResponse response = new PostResponse(
+        UUID.randomUUID(),
+        UUID.fromString("00000000-0000-0000-0000-000000000001"),
+        "Test User",
+        null,
+        "title",
+        "action",
+        null,
+        null,
+        "PUBLIC",
+        OffsetDateTime.now(),
+        List.of(),
+        List.of()
+    );
+    when(postCommandService.create(any(CreatePostRequest.class), any())).thenReturn(response);
 
     final MockMultipartFile requestPart = new MockMultipartFile(
         "request",
@@ -141,7 +154,7 @@ class PostControllerTest {
     );
 
     mockMvc.perform(multipart("/api/posts").file(requestPart))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isCreated());
   }
 
   @Test

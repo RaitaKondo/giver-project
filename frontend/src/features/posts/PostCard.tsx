@@ -6,9 +6,10 @@ import type { Post } from '../../types/models'
 
 type PostCardProps = {
   post: Post
+  showVisibility?: boolean
 }
 
-export function PostCard({ post }: PostCardProps) {
+export function PostCard({ post, showVisibility = true }: PostCardProps) {
   const { isAuthenticated } = useAuth()
   const [isBookmarked, setIsBookmarked] = useState(Boolean(post.isBookmarked))
   const [isSubmittingBookmark, setIsSubmittingBookmark] = useState(false)
@@ -88,10 +89,12 @@ export function PostCard({ post }: PostCardProps) {
               </span>
             ))}
           </div>
-          <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            <span className="material-symbols-outlined text-sm">public</span>
-            {post.isPublic ? '公開' : '非公開'}
-          </span>
+          {showVisibility ? (
+            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              <span className="material-symbols-outlined text-sm">public</span>
+              {post.isPublic ? '公開' : '非公開'}
+            </span>
+          ) : null}
         </div>
       </div>
     </article>

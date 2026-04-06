@@ -12,6 +12,7 @@ export function LoginPage() {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const MAX_DISPLAY_NAME_LENGTH = 100;
 
   const redirectPath = useMemo(() => {
     const query = new URLSearchParams(location.search);
@@ -31,6 +32,13 @@ export function LoginPage() {
       if (mode === "login") {
         await signInWithEmail(email, password);
       } else {
+        const normalizedDisplayName = displayName.trim();
+        if (!normalizedDisplayName) {
+          throw new Error("表示名は必須です。");
+        }
+        if (normalizedDisplayName.length > MAX_DISPLAY_NAME_LENGTH) {
+          throw new Error("表示名は100文字以内で入力してください。");
+        }
         await signUpWithEmail(email, password, displayName);
       }
       navigate(redirectPath, { replace: true });
@@ -86,7 +94,9 @@ export function LoginPage() {
               <span className="text-sm font-semibold text-slate-700">表示名</span>
               <input
                 className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-primary"
+                maxLength={MAX_DISPLAY_NAME_LENGTH}
                 placeholder="表示名"
+                required
                 value={displayName}
                 onChange={(event) => setDisplayName(event.target.value)}
               />

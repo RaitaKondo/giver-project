@@ -9,6 +9,7 @@ import { MeProfilePage } from './pages/MeProfilePage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { PostDetailPage } from './pages/PostDetailPage'
 import { ProfilePage } from './pages/ProfilePage'
+import { SecuritySettingsPage } from './pages/SecuritySettingsPage'
 import { RequireAuth } from './features/auth/RequireAuth'
 import { AppLayout } from './shared/layout/AppLayout'
 
@@ -26,6 +27,7 @@ function App() {
           <Route element={<CreateRecordPage />} path="/posts/new" />
           <Route element={<DashboardPage />} path="/me/dashboard" />
           <Route element={<MeProfilePage />} path="/me/profile" />
+          <Route element={<SecuritySettingsPage />} path="/me/security" />
         </Route>
         <Route element={<Navigate replace to="/" />} path="/home" />
         <Route element={<NotFoundPage />} path="*" />

@@ -5,7 +5,6 @@ import {
   createPost,
   fetchContextMasters,
   type ContextMasterResponse,
-  type Visibility,
 } from "../api/postApi";
 
 export function CreateRecordPage() {
@@ -22,9 +21,6 @@ export function CreateRecordPage() {
   // バックエンドの posts.change_text に対応
   const [changeText, setChangeText] = useState("");
 
-  // バックエンドの visibility に対応
-  const [visibility, setVisibility] = useState<Visibility>("PUBLIC");
-
   // 画像は最大4枚
   const [images, setImages] = useState<File[]>([]);
 
@@ -34,9 +30,6 @@ export function CreateRecordPage() {
   );
   const [selectedContextIds, setSelectedContextIds] = useState<number[]>([]);
   const [isLoadingContexts, setIsLoadingContexts] = useState(true);
-
-  // 利用者に確認させたい注意事項用
-  const [confirmedNoPersonalInfo, setConfirmedNoPersonalInfo] = useState(false);
 
   // UI状態
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -69,13 +62,8 @@ export function CreateRecordPage() {
   }, []);
 
   const canSubmit = useMemo(() => {
-    return (
-      !isSubmitting &&
-      actionText.trim().length > 0 &&
-      confirmedNoPersonalInfo &&
-      images.length <= 4
-    );
-  }, [actionText, confirmedNoPersonalInfo, images.length, isSubmitting]);
+    return !isSubmitting && actionText.trim().length > 0 && images.length <= 4;
+  }, [actionText, images.length, isSubmitting]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files ?? []);
@@ -101,10 +89,8 @@ export function CreateRecordPage() {
     setActionText("");
     setConflictText("");
     setChangeText("");
-    setVisibility("PUBLIC");
     setImages([]);
     setSelectedContextIds([]);
-    setConfirmedNoPersonalInfo(false);
   };
 
   const handleToggleContext = (contextId: number) => {
@@ -128,11 +114,6 @@ export function CreateRecordPage() {
       return;
     }
 
-    if (!confirmedNoPersonalInfo) {
-      setErrorMessage("個人情報を含まないことを確認してください。");
-      return;
-    }
-
     if (images.length > 4) {
       setErrorMessage("画像は4枚までです。");
       return;
@@ -147,7 +128,7 @@ export function CreateRecordPage() {
         actionText: actionText.trim(),
         conflictText: conflictText.trim() || null,
         changeText: changeText.trim() || null,
-        visibility,
+        visibility: "PUBLIC" as const,
         contextIds: selectedContextIds,
       };
 
@@ -249,7 +230,7 @@ export function CreateRecordPage() {
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
                 4
               </span>
-              <h2 className="text-xl font-bold">結果・変化</h2>
+              <h2 className="text-xl font-bold">結果・変化・考察</h2>
             </div>
 
             <textarea
@@ -263,54 +244,6 @@ export function CreateRecordPage() {
             <p className="text-right text-xs text-slate-400">
               {changeTextLength} / 1000
             </p>
-          </section>
-
-          <section className="space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-widest text-slate-500">
-              公開範囲
-            </h3>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              {[
-                {
-                  value: "PUBLIC",
-                  label: "公開",
-                  description: "誰でも見られます",
-                },
-                {
-                  value: "FOLLOWERS",
-                  label: "フォロワーのみ",
-                  description: "フォロー関係のある人向け",
-                },
-                {
-                  value: "PRIVATE",
-                  label: "非公開",
-                  description: "自分用メモとして保存",
-                },
-              ].map((option) => (
-                <label
-                  key={option.value}
-                  className={`cursor-pointer rounded-2xl border p-4 transition ${
-                    visibility === option.value
-                      ? "border-primary bg-primary/5"
-                      : "border-slate-200 bg-white hover:border-primary/50"
-                  }`}
-                >
-                  <input
-                    checked={visibility === option.value}
-                    className="sr-only"
-                    name="visibility"
-                    type="radio"
-                    value={option.value}
-                    onChange={() => setVisibility(option.value as Visibility)}
-                  />
-                  <p className="font-bold text-slate-800">{option.label}</p>
-                  <p className="mt-1 text-sm text-slate-500">
-                    {option.description}
-                  </p>
-                </label>
-              ))}
-            </div>
           </section>
 
           <section className="space-y-4">
@@ -375,7 +308,9 @@ export function CreateRecordPage() {
 
             <div className="rounded-2xl border border-slate-200 bg-white p-4">
               {isLoadingContexts ? (
-                <p className="text-sm text-slate-500">文脈を読み込み中です...</p>
+                <p className="text-sm text-slate-500">
+                  文脈を読み込み中です...
+                </p>
               ) : contextMasters.length === 0 ? (
                 <p className="text-sm text-slate-500">
                   選択可能な文脈がまだ登録されていません。
@@ -441,42 +376,7 @@ export function CreateRecordPage() {
 
           <div className="sticky bottom-8 rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-2xl backdrop-blur-sm">
             <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-              <div className="space-y-3">
-                <p className="text-sm font-semibold text-slate-700">
-                  投稿前の確認
-                </p>
-
-                <label className="flex items-center gap-2 text-sm text-slate-700">
-                  <input
-                    checked={visibility === "PUBLIC"}
-                    className="size-4 rounded border-slate-300 text-primary focus:ring-primary"
-                    readOnly
-                    type="checkbox"
-                  />
-                  公開設定は現在「{visibility}」です
-                </label>
-
-                <label className="flex items-center gap-2 text-sm text-slate-600">
-                  <input
-                    checked={confirmedNoPersonalInfo}
-                    className="size-4 rounded border-slate-300 text-primary focus:ring-primary"
-                    type="checkbox"
-                    onChange={(event) =>
-                      setConfirmedNoPersonalInfo(event.target.checked)
-                    }
-                  />
-                  個人名・住所など特定可能情報を含まない
-                </label>
-              </div>
-
               <div className="flex items-center gap-3">
-                <button
-                  className="rounded-xl bg-slate-200 px-6 py-3 text-sm font-bold text-slate-800 transition-colors hover:bg-slate-300"
-                  type="button"
-                >
-                  下書き保存
-                </button>
-
                 <button
                   className="rounded-xl bg-primary px-8 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
                   disabled={!canSubmit}

@@ -147,6 +147,22 @@ class PostCommandServiceTest {
     assertThat(response.contexts()).extracting("id").containsExactly(1L, 3L);
   }
 
+  @Test
+  void create_forcesVisibilityToPublicEvenWhenRequestIsPrivate() {
+    final CreatePostRequest request = new CreatePostRequest(
+        "title",
+        "action",
+        null,
+        null,
+        "PRIVATE",
+        List.of()
+    );
+
+    final PostResponse response = postCommandService.create(request, null);
+
+    assertThat(response.visibility()).isEqualTo("PUBLIC");
+  }
+
   private ContextMaster contextMaster(Long id, String code, String name, String category, int sortOrder) {
     final ContextMaster contextMaster = new ContextMaster(code, name, category, sortOrder, true);
     try {
