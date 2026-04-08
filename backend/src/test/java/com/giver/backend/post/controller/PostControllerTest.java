@@ -65,7 +65,10 @@ class PostControllerTest {
         "PUBLIC",
         OffsetDateTime.now(),
         List.of(new PostImageResponse(UUID.randomUUID(), "https://example.com/signed", 0)),
-        List.of(new PostContextResponse(1L, "workplace", "職場", "PLACE"))
+        List.of(new PostContextResponse(1L, "workplace", "職場", "PLACE")),
+        java.util.Map.of("like", 0L, "thanks", 0L, "empathize", 0L, "inspiring", 0L),
+        null,
+        0L
     );
 
     when(postCommandService.create(any(CreatePostRequest.class), any())).thenReturn(response);
@@ -140,7 +143,10 @@ class PostControllerTest {
         "PUBLIC",
         OffsetDateTime.now(),
         List.of(),
-        List.of()
+        List.of(),
+        java.util.Map.of("like", 0L, "thanks", 0L, "empathize", 0L, "inspiring", 0L),
+        null,
+        0L
     );
     when(postCommandService.create(any(CreatePostRequest.class), any())).thenReturn(response);
 
@@ -172,7 +178,10 @@ class PostControllerTest {
         "PUBLIC",
         OffsetDateTime.now(),
         List.of(),
-        List.of(new PostContextResponse(1L, "workplace", "職場", "PLACE"))
+        List.of(new PostContextResponse(1L, "workplace", "職場", "PLACE")),
+        java.util.Map.of("like", 0L, "thanks", 0L, "empathize", 0L, "inspiring", 0L),
+        null,
+        0L
     );
     when(postQueryService.findById(eq(postId))).thenReturn(response);
 
@@ -195,7 +204,10 @@ class PostControllerTest {
                 "PUBLIC",
                 OffsetDateTime.now(),
                 null,
-                List.of(new PostContextResponse(1L, "workplace", "職場", "PLACE"))
+                List.of(new PostContextResponse(1L, "workplace", "職場", "PLACE")),
+                java.util.Map.of("like", 0L, "thanks", 0L, "empathize", 0L, "inspiring", 0L),
+                null,
+                0L
             )
         )
     );

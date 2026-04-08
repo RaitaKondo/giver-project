@@ -11,6 +11,7 @@ import com.giver.backend.context.entity.ContextMaster;
 import com.giver.backend.context.repository.ContextMasterRepository;
 import com.giver.backend.post.dto.request.CreatePostRequest;
 import com.giver.backend.post.dto.response.PostResponse;
+import com.giver.backend.post.dto.response.ReactionSummaryResponse;
 import com.giver.backend.post.entity.Post;
 import com.giver.backend.post.repository.PostRepository;
 import com.giver.backend.storage.GcsImageStorageService;
@@ -54,6 +55,9 @@ class PostCommandServiceTest {
   @Mock
   private UserPhotoUrlResolver userPhotoUrlResolver;
 
+  @Mock
+  private PostEngagementQueryService postEngagementQueryService;
+
   private PostCommandService postCommandService;
 
   @BeforeEach
@@ -65,7 +69,8 @@ class PostCommandServiceTest {
         gcsSignedUrlService,
         currentUserService,
         userAccountRepository,
-        userPhotoUrlResolver
+        userPhotoUrlResolver,
+        postEngagementQueryService
     );
 
     when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -73,6 +78,8 @@ class PostCommandServiceTest {
     lenient().when(userAccountRepository.findById(CURRENT_USER_ID))
         .thenReturn(Optional.of(new UserAccount("firebase-uid", "Test User", "test@example.com", null)));
     lenient().when(userPhotoUrlResolver.resolve(any(UserAccount.class))).thenReturn(null);
+    lenient().when(postEngagementQueryService.summarizeForPost(any(), any()))
+        .thenReturn(new ReactionSummaryResponse(java.util.Map.of("like", 0L, "thanks", 0L, "empathize", 0L, "inspiring", 0L), null, 0L));
   }
 
   @Test

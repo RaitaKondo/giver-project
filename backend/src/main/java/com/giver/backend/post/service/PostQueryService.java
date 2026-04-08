@@ -1,6 +1,7 @@
 package com.giver.backend.post.service;
 
 import com.giver.backend.context.dto.PostContextResponse;
+import com.giver.backend.auth.CurrentUserService;
 import com.giver.backend.post.entity.Post;
 import com.giver.backend.post.entity.PostContext;
 import com.giver.backend.post.entity.PostImage;
@@ -8,15 +9,16 @@ import com.giver.backend.post.dto.request.SearchPostsRequest;
 import com.giver.backend.post.dto.response.PostImageResponse;
 import com.giver.backend.post.dto.response.PostResponse;
 import com.giver.backend.post.dto.response.PostSummaryResponse;
+import com.giver.backend.post.dto.response.ReactionSummaryResponse;
 import com.giver.backend.post.repository.PostRepository;
 import com.giver.backend.storage.GcsSignedUrlService;
 import com.giver.backend.user.entity.UserAccount;
 import com.giver.backend.user.repository.UserAccountRepository;
 import com.giver.backend.user.service.UserPhotoUrlResolver;
 import java.util.Comparator;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
@@ -38,17 +40,23 @@ public class PostQueryService {
   private final GcsSignedUrlService gcsSignedUrlService;
   private final UserAccountRepository userAccountRepository;
   private final UserPhotoUrlResolver userPhotoUrlResolver;
+  private final CurrentUserService currentUserService;
+  private final PostEngagementQueryService postEngagementQueryService;
 
   public PostQueryService(
       PostRepository postRepository,
       GcsSignedUrlService gcsSignedUrlService,
       UserAccountRepository userAccountRepository,
-      UserPhotoUrlResolver userPhotoUrlResolver
+      UserPhotoUrlResolver userPhotoUrlResolver,
+      CurrentUserService currentUserService,
+      PostEngagementQueryService postEngagementQueryService
   ) {
     this.postRepository = postRepository;
     this.gcsSignedUrlService = gcsSignedUrlService;
     this.userAccountRepository = userAccountRepository;
     this.userPhotoUrlResolver = userPhotoUrlResolver;
+    this.currentUserService = currentUserService;
+    this.postEngagementQueryService = postEngagementQueryService;
   }
 
   public PostResponse findById(UUID postId) {
@@ -64,7 +72,7 @@ public class PostQueryService {
         .orElseThrow(() -> new NoSuchElementException("Post not found: " + postId));
     postRepository.findWithContextsById(postId)
         .orElseThrow(() -> new NoSuchElementException("Post not found: " + postId));
-    return toPostResponse(post);
+    return toPostResponse(post, currentUserService.getCurrentUserIdOrNull());
   }
 
   public Page<PostSummaryResponse> search(SearchPostsRequest request) {
@@ -81,7 +89,7 @@ public class PostQueryService {
         ? postRepository.findAll(pageable)
         : postRepository.findByVisibility(visibility, pageable);
 
-    return posts.map(this::toSummaryResponse);
+    return toSummaryPage(posts, currentUserService.getCurrentUserIdOrNull());
   }
 
   public Page<PostSummaryResponse> findMyPosts(UUID authorId, Integer page, Integer size) {
@@ -90,7 +98,10 @@ public class PostQueryService {
         normalizeSize(size),
         Sort.by(Sort.Direction.DESC, "createdAt")
     );
-    return postRepository.findByAuthorId(authorId, pageable).map(this::toSummaryResponse);
+    return toSummaryPage(
+        postRepository.findByAuthorId(authorId, pageable),
+        currentUserService.getCurrentUserIdOrNull()
+    );
   }
 
   public Page<PostSummaryResponse> findPublicPostsByAuthor(UUID authorId, Integer page, Integer size) {
@@ -99,7 +110,10 @@ public class PostQueryService {
         normalizeSize(size),
         Sort.by(Sort.Direction.DESC, "createdAt")
     );
-    return postRepository.findByAuthorIdAndVisibility(authorId, "PUBLIC", pageable).map(this::toSummaryResponse);
+    return toSummaryPage(
+        postRepository.findByAuthorIdAndVisibility(authorId, "PUBLIC", pageable),
+        currentUserService.getCurrentUserIdOrNull()
+    );
   }
 
   public Page<PostSummaryResponse> findFeedPosts(List<UUID> followeeIds, Integer page, Integer size) {
@@ -111,11 +125,14 @@ public class PostQueryService {
     if (followeeIds == null || followeeIds.isEmpty()) {
       return Page.empty(pageable);
     }
-    return postRepository.findByAuthorIdInAndVisibilityIn(
-        followeeIds,
-        List.of("PUBLIC", "FOLLOWERS"),
-        pageable
-    ).map(this::toSummaryResponse);
+    return toSummaryPage(
+        postRepository.findByAuthorIdInAndVisibilityIn(
+            followeeIds,
+            List.of("PUBLIC", "FOLLOWERS"),
+            pageable
+        ),
+        currentUserService.getCurrentUserIdOrNull()
+    );
   }
 
   private String normalizeVisibilityFilter(String visibility) {
@@ -140,13 +157,14 @@ public class PostQueryService {
     return Math.min(size, 100);
   }
 
-  private PostResponse toPostResponse(Post post) {
+  private PostResponse toPostResponse(Post post, UUID viewerUserId) {
     final UserAccount author = requireAuthor(post);
     final List<PostImageResponse> images = post.getImages().stream()
         .sorted(Comparator.comparingInt(PostImage::getSortOrder))
         .map(this::toImageResponse)
         .toList();
     final List<PostContextResponse> contexts = toContextResponses(post);
+    final ReactionSummaryResponse engagement = postEngagementQueryService.summarizeForPost(post.getId(), viewerUserId);
 
     return new PostResponse(
         post.getId(),
@@ -160,11 +178,14 @@ public class PostQueryService {
         post.getVisibility(),
         post.getCreatedAt(),
         images,
-        contexts
+        contexts,
+        engagement.reactionCounts(),
+        engagement.myReactionType(),
+        engagement.commentCount()
     );
   }
 
-  private PostSummaryResponse toSummaryResponse(Post post) {
+  private PostSummaryResponse toSummaryResponse(Post post, ReactionSummaryResponse engagement) {
     final UserAccount author = requireAuthor(post);
     final String thumbnailUrl = post.getImages().stream()
         .min(Comparator.comparingInt(PostImage::getSortOrder))
@@ -185,8 +206,22 @@ public class PostQueryService {
         post.getVisibility(),
         post.getCreatedAt(),
         thumbnailUrl,
-        toContextResponses(post)
+        toContextResponses(post),
+        engagement.reactionCounts(),
+        engagement.myReactionType(),
+        engagement.commentCount()
     );
+  }
+
+  private Page<PostSummaryResponse> toSummaryPage(Page<Post> posts, UUID viewerUserId) {
+    final Map<UUID, ReactionSummaryResponse> engagementByPostId = postEngagementQueryService.summarizeForPosts(
+        posts.getContent().stream().map(Post::getId).toList(),
+        viewerUserId
+    );
+    return posts.map(post -> toSummaryResponse(
+        post,
+        engagementByPostId.getOrDefault(post.getId(), new ReactionSummaryResponse(Map.of(), null, 0))
+    ));
   }
 
   private PostImageResponse toImageResponse(PostImage image) {

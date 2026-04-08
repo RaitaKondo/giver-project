@@ -54,6 +54,29 @@ export async function apiPost(path: string, init?: RequestInit): Promise<void> {
   }
 }
 
+export async function apiPostJson<T>(
+  path: string,
+  body: unknown,
+  init?: RequestInit,
+): Promise<T> {
+  const headers = await buildAuthHeaders(init?.headers);
+  headers.set("Content-Type", "application/json");
+
+  const response = await fetch(buildUrl(path), {
+    ...init,
+    method: "POST",
+    body: JSON.stringify(body),
+    headers,
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => null as ApiErrorBody | null);
+    throw new Error(errorBody?.message ?? "API リクエストに失敗しました。");
+  }
+
+  return response.json() as Promise<T>;
+}
+
 export async function apiPostFormData<T>(
   path: string,
   body: FormData,
