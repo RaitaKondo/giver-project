@@ -6,6 +6,7 @@ const navItems = [
   { to: "/feed", label: "フィード" },
   { to: "/discover", label: "見つける" },
   { to: "/me/dashboard", label: "ダッシュボード" },
+  { to: "/posts/new", label: "新規投稿" },
 ];
 
 export function AppHeader() {
