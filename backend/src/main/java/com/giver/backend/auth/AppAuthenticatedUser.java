@@ -11,10 +11,17 @@ public record AppAuthenticatedUser(
     String firebaseUid,
     String displayName,
     String email,
-    String photoUrl
+    String photoUrl,
+    boolean admin
 ) {
 
   public Collection<? extends GrantedAuthority> authorities() {
+    if (admin) {
+      return List.of(
+          new SimpleGrantedAuthority("ROLE_USER"),
+          new SimpleGrantedAuthority("ROLE_ADMIN")
+      );
+    }
     return List.of(new SimpleGrantedAuthority("ROLE_USER"));
   }
 }

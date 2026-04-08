@@ -1,46 +1,56 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { bookmarkPost, removeBookmark } from '../../api/authApi'
-import { useAuth } from '../auth/useAuth'
-import type { Post } from '../../types/models'
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { bookmarkPost, removeBookmark } from "../../api/authApi";
+import { useAuth } from "../auth/useAuth";
+import type { Post } from "../../types/models";
 
 type PostCardProps = {
-  post: Post
-  showVisibility?: boolean
-}
+  post: Post;
+  showVisibility?: boolean;
+};
 
 export function PostCard({ post, showVisibility = true }: PostCardProps) {
-  const { isAuthenticated } = useAuth()
-  const [isBookmarked, setIsBookmarked] = useState(Boolean(post.isBookmarked))
-  const [isSubmittingBookmark, setIsSubmittingBookmark] = useState(false)
+  const { isAuthenticated } = useAuth();
+  const [isBookmarked, setIsBookmarked] = useState(Boolean(post.isBookmarked));
+  const [isSubmittingBookmark, setIsSubmittingBookmark] = useState(false);
 
   const handleBookmarkToggle = async () => {
     if (!isAuthenticated) {
-      window.location.href = `/login?redirect=${encodeURIComponent(`/posts/${post.id}`)}`
-      return
+      window.location.href = `/login?redirect=${encodeURIComponent(`/posts/${post.id}`)}`;
+      return;
     }
 
-    setIsSubmittingBookmark(true)
+    setIsSubmittingBookmark(true);
     try {
       if (isBookmarked) {
-        await removeBookmark(post.id)
-        setIsBookmarked(false)
+        await removeBookmark(post.id);
+        setIsBookmarked(false);
       } else {
-        await bookmarkPost(post.id)
-        setIsBookmarked(true)
+        await bookmarkPost(post.id);
+        setIsBookmarked(true);
       }
     } finally {
-      setIsSubmittingBookmark(false)
+      setIsSubmittingBookmark(false);
     }
-  }
+  };
 
   return (
     <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
-      {post.image ? <img alt={post.title} className="h-48 w-full object-cover" src={post.image} /> : null}
+      {post.image ? (
+        <img
+          alt={post.title}
+          className="h-48 w-full object-cover"
+          src={post.image}
+        />
+      ) : null}
       <div className="p-5">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img alt={post.authorName} className="h-10 w-10 rounded-full object-cover" src={post.authorAvatar} />
+            <img
+              alt={post.authorName}
+              className="h-10 w-10 rounded-full object-cover"
+              src={post.authorAvatar}
+            />
             <div>
               <h4 className="text-sm font-bold">{post.authorName}</h4>
               <p className="text-xs text-slate-500">
@@ -48,7 +58,7 @@ export function PostCard({ post, showVisibility = true }: PostCardProps) {
               </p>
             </div>
           </div>
-          <button
+          {/* <button
             className="rounded-lg border border-slate-200 p-2 text-slate-500 transition-colors hover:border-primary hover:text-primary disabled:opacity-60"
             disabled={isSubmittingBookmark}
             type="button"
@@ -57,20 +67,26 @@ export function PostCard({ post, showVisibility = true }: PostCardProps) {
             <span className="material-symbols-outlined text-base">
               {isBookmarked ? 'bookmark_added' : 'bookmark'}
             </span>
-          </button>
+          </button> */}
         </div>
 
         <Link className="block space-y-3" to={`/posts/${post.id}`}>
-          <h3 className="text-xl font-bold leading-tight text-slate-900">{post.title}</h3>
+          <h3 className="text-xl font-bold leading-tight text-slate-900">
+            {post.title}
+          </h3>
           <div className="space-y-2 text-sm">
             <div className="flex gap-2">
-              <span className="mt-0.5 shrink-0 text-xs font-bold uppercase tracking-wider text-slate-400">行動</span>
+              <span className="mt-0.5 shrink-0 text-xs font-bold uppercase tracking-wider text-slate-400">
+                行動
+              </span>
               <p className="text-slate-600">{post.action}</p>
             </div>
             {post.outcome ? (
               <div className="rounded-r-lg border-l-4 border-primary bg-primary/10 p-3">
                 <div className="flex gap-2">
-                  <span className="mt-0.5 shrink-0 text-xs font-bold uppercase tracking-wider text-primary">結果</span>
+                  <span className="mt-0.5 shrink-0 text-xs font-bold uppercase tracking-wider text-primary">
+                    結果
+                  </span>
                   <p className="font-medium text-slate-800">{post.outcome}</p>
                 </div>
               </div>
@@ -92,11 +108,11 @@ export function PostCard({ post, showVisibility = true }: PostCardProps) {
           {showVisibility ? (
             <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
               <span className="material-symbols-outlined text-sm">public</span>
-              {post.isPublic ? '公開' : '非公開'}
+              {post.isPublic ? "公開" : "非公開"}
             </span>
           ) : null}
         </div>
       </div>
     </article>
-  )
+  );
 }

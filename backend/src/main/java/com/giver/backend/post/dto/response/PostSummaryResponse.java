@@ -2,6 +2,7 @@ package com.giver.backend.post.dto.response;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.giver.backend.context.dto.PostContextResponse;
@@ -17,6 +18,9 @@ public record PostSummaryResponse(
     String visibility,
     OffsetDateTime createdAt,
     String thumbnailUrl,
-    List<PostContextResponse> contexts
+    List<PostContextResponse> contexts,
+    Map<String, Long> reactionCounts,
+    String myReactionType,
+    long commentCount
 ) {
 }

@@ -10,6 +10,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,7 +62,8 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
           user.getFirebaseUid(),
           user.getDisplayName(),
           user.getEmail(),
-          user.getPhotoUrl()
+          user.getPhotoUrl(),
+          isAdmin(firebaseToken)
       );
 
       SecurityContextHolder.getContext().setAuthentication(
@@ -79,5 +83,33 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
       return firebaseToken.getName().trim();
     }
     return "";
+  }
+
+  private boolean isAdmin(FirebaseToken firebaseToken) {
+    final Map<String, Object> claims = firebaseToken.getClaims();
+    if (claims == null || claims.isEmpty()) {
+      return false;
+    }
+
+    final Object adminClaim = claims.get("admin");
+    if (adminClaim instanceof Boolean value && value) {
+      return true;
+    }
+
+    final Object roleClaim = claims.get("role");
+    if (roleClaim instanceof String role && "admin".equalsIgnoreCase(role.trim())) {
+      return true;
+    }
+
+    final Object rolesClaim = claims.get("roles");
+    if (rolesClaim instanceof Collection<?> roles) {
+      return roles.stream()
+          .filter(String.class::isInstance)
+          .map(String.class::cast)
+          .map(value -> value.toLowerCase(Locale.ROOT))
+          .anyMatch("admin"::equals);
+    }
+
+    return false;
   }
 }

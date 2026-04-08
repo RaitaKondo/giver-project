@@ -10,6 +10,7 @@ import com.giver.backend.post.entity.PostImage;
 import com.giver.backend.post.dto.request.CreatePostRequest;
 import com.giver.backend.post.dto.response.PostImageResponse;
 import com.giver.backend.post.dto.response.PostResponse;
+import com.giver.backend.post.dto.response.ReactionSummaryResponse;
 import com.giver.backend.post.repository.PostRepository;
 import com.giver.backend.storage.GcsImageStorageService;
 import com.giver.backend.storage.GcsSignedUrlService;
@@ -41,6 +42,7 @@ public class PostCommandService {
   private final CurrentUserService currentUserService;
   private final UserAccountRepository userAccountRepository;
   private final UserPhotoUrlResolver userPhotoUrlResolver;
+  private final PostEngagementQueryService postEngagementQueryService;
 
   public PostCommandService(
       PostRepository postRepository,
@@ -49,7 +51,8 @@ public class PostCommandService {
       GcsSignedUrlService gcsSignedUrlService,
       CurrentUserService currentUserService,
       UserAccountRepository userAccountRepository,
-      UserPhotoUrlResolver userPhotoUrlResolver
+      UserPhotoUrlResolver userPhotoUrlResolver,
+      PostEngagementQueryService postEngagementQueryService
   ) {
     this.postRepository = postRepository;
     this.contextMasterRepository = contextMasterRepository;
@@ -58,6 +61,7 @@ public class PostCommandService {
     this.currentUserService = currentUserService;
     this.userAccountRepository = userAccountRepository;
     this.userPhotoUrlResolver = userPhotoUrlResolver;
+    this.postEngagementQueryService = postEngagementQueryService;
   }
 
   @Transactional
@@ -181,6 +185,10 @@ public class PostCommandService {
             postContext.getContextMaster().getCategory()
         ))
         .toList();
+    final ReactionSummaryResponse engagement = postEngagementQueryService.summarizeForPost(
+        post.getId(),
+        currentUserService.getCurrentUserIdOrNull()
+    );
 
     return new PostResponse(
         post.getId(),
@@ -194,7 +202,10 @@ public class PostCommandService {
         post.getVisibility(),
         post.getCreatedAt(),
         imageResponses,
-        contextResponses
+        contextResponses,
+        engagement.reactionCounts(),
+        engagement.myReactionType(),
+        engagement.commentCount()
     );
   }
 

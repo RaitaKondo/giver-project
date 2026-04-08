@@ -1,4 +1,4 @@
-import { apiGet, apiPostFormData } from "./apiClient";
+import { apiDelete, apiGet, apiPatchJson, apiPostFormData, apiPostJson } from "./apiClient";
 
 export type Visibility = "PUBLIC" | "FOLLOWERS" | "PRIVATE";
 
@@ -29,6 +29,9 @@ export type PostSummaryResponse = {
   createdAt: string;
   thumbnailUrl: string | null;
   contexts: PostContextResponse[];
+  reactionCounts: Record<ReactionType, number>;
+  myReactionType: ReactionType | null;
+  commentCount: number;
 };
 
 export type PageResponse<T> = {
@@ -65,6 +68,17 @@ export type CreatePostResponse = {
     sortOrder: number;
   }>;
   contexts: PostContextResponse[];
+  reactionCounts: Record<ReactionType, number>;
+  myReactionType: ReactionType | null;
+  commentCount: number;
+};
+
+export type ReactionType = "like" | "thanks" | "empathize" | "inspiring";
+
+export type ReactionSummaryResponse = {
+  reactionCounts: Record<ReactionType, number>;
+  myReactionType: ReactionType | null;
+  commentCount: number;
 };
 
 export type PostDetailResponse = {
@@ -84,6 +98,21 @@ export type PostDetailResponse = {
     sortOrder: number;
   }>;
   contexts: PostContextResponse[];
+  reactionCounts: Record<ReactionType, number>;
+  myReactionType: ReactionType | null;
+  commentCount: number;
+};
+
+export type CommentResponse = {
+  id: string;
+  postId: string;
+  userId: string;
+  userDisplayName: string;
+  userPhotoUrl: string | null;
+  body: string;
+  createdAt: string;
+  updatedAt: string | null;
+  edited: boolean;
 };
 
 export const fetchPosts = async (
@@ -115,4 +144,33 @@ export const createPost = async (
   });
 
   return apiPostFormData<CreatePostResponse>("/api/posts", formData);
+};
+
+export const fetchComments = async (postId: string): Promise<CommentResponse[]> => {
+  return apiGet<CommentResponse[]>(`/api/posts/${postId}/comments`);
+};
+
+export const createComment = async (
+  postId: string,
+  body: string,
+): Promise<CommentResponse> => {
+  return apiPostJson<CommentResponse>(`/api/posts/${postId}/comments`, { body });
+};
+
+export const updateComment = async (
+  commentId: string,
+  body: string,
+): Promise<CommentResponse> => {
+  return apiPatchJson<CommentResponse>(`/api/comments/${commentId}`, { body });
+};
+
+export const deleteComment = async (commentId: string): Promise<void> => {
+  await apiDelete(`/api/comments/${commentId}`);
+};
+
+export const toggleReaction = async (
+  postId: string,
+  type: ReactionType,
+): Promise<ReactionSummaryResponse> => {
+  return apiPostJson<ReactionSummaryResponse>(`/api/posts/${postId}/reactions`, { type });
 };
