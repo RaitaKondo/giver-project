@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { fetchMyFollows, fetchMyPosts, type FollowOverviewResponse } from "../api/authApi";
+import type { PostSummaryResponse } from "../api/postApi";
 import { useAuth } from "../features/auth/useAuth";
 import { formatCreatedAt, toFeedPost } from "../features/posts/postMappers";
 import { FollowUserCard } from "../features/users/FollowUserCard";
@@ -11,6 +12,7 @@ import type { Post, User } from "../types/models";
 export function DashboardPage() {
   const { profile } = useAuth();
   const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [rawPosts, setRawPosts] = useState<PostSummaryResponse[]>([]);
   const [followOverview, setFollowOverview] = useState<FollowOverviewResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -25,6 +27,7 @@ export function DashboardPage() {
           fetchMyPosts(0, 100),
           fetchMyFollows(),
         ]);
+        setRawPosts(page.content);
         setAllPosts(page.content.map((post) => toFeedPost(post)));
         setFollowOverview(follows);
       } catch (error) {
@@ -49,7 +52,7 @@ export function DashboardPage() {
 
   const stats = useMemo(() => {
     const uniqueTags = new Set(myPosts.flatMap((post) => post.tags));
-    const recentPosts = myPosts.filter((post) => isInLastDays(post.createdAt, 30)).length;
+    const recentPosts = rawPosts.filter((post) => isInLastDays(post.createdAt, 30)).length;
 
     return [
       ["総投稿数", String(myPosts.length), `${recentPosts}件 / 30日`],
@@ -57,7 +60,7 @@ export function DashboardPage() {
       ["フォロー中", String(followOverview?.followingCount ?? 0), "アカウント"],
       ["フォロワー", String(followOverview?.followerCount ?? 0), "アカウント"],
     ] as const;
-  }, [myPosts, followOverview]);
+  }, [myPosts, rawPosts, followOverview]);
 
   const topTags = useMemo(() => {
     const counts = new Map<string, number>();
