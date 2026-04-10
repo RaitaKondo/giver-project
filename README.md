@@ -25,6 +25,64 @@ GCP上でクラウドネイティブな構成を採用し、
 
 ## ☁️ クラウド・インフラ設計
 
+### 🏗 システムフロー
+
+Frontend (React + Firebase Auth)
+→ Firebase Authentication
+→ (ID Token)
+→ Backend (Cloud Run / Spring Boot)
+→ Cloud SQL (PostgreSQL)
+→ Cloud Storage (GCS)
+
+---
+
+## 🚀 デプロイメントフロー
+
+Source Code
+→ Docker Build
+→ Artifact Registry
+→ Cloud Run (API)
+→ Cloud SQL / GCS
+
+---
+
+## 🔐 リクエストフロー
+
+User
+→ Frontend (React)
+→ Firebase Auth (Login)
+→ ID Token
+→ Cloud Run (Spring Boot)
+→ Firebase Admin SDK (Token Verify)
+→ Application Logic
+→ Cloud SQL / GCS
+
+---
+
+## 💰 コスト最適化フロー（スケジューラでDBインスタンスを管理）
+
+Cloud Scheduler
+→ Cloud Function / Job
+→ Cloud SQL Admin API
+→ Cloud SQL (Start / Stop)
+
+---
+
+## 🌐 全体像
+
+[User]
+→ [React Frontend]
+→ [Firebase Auth]
+→ (ID Token)
+→ [Cloud Run (Spring Boot API)]
+→ [Cloud SQL] / [Cloud Storage]
+
+- Background Job:
+  [Cloud Scheduler] → [SQL Stop/Start]
+
+Deployment:
+Source → Docker → Artifact Registry → Cloud Run
+
 ### クラウドネイティブ構成
 
 - Cloud Run を中心としたサーバーレスアーキテクチャ
