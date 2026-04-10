@@ -1,99 +1,167 @@
 # giver-project
 
+---
+
+# 🚀 giver-project 技術アピールポイント
+
+## 🎯 一言まとめ
+
 Firebase Authentication を使ったログイン付きのソーシャル投稿アプリです。  
 `frontend/` は React + Vite、`backend/` は Spring Boot + PostgreSQL で構成しています。
 
-## Directory
+GCP上でクラウドネイティブな構成を採用し、  
+認証・インフラ・ストレージを分離しながら、  
+コスト最適化や運用まで考慮した設計を行ったプロジェクトです。
 
-- `frontend/`: Web アプリ
-- `backend/`: API / 認証検証 / DB アクセス
-- `infra/`: インフラ用ファイル
-- `project-reference/`: 実装メモと参照ドキュメント
+---
 
-## Frontend Env
+## 🌳 概要
 
-`frontend/.env.development`
+本プロジェクトは、GCP上でクラウドネイティブな構成を採用し、  
+認証・インフラ・ストレージを分離しながら、  
+**運用・コスト最適化まで考慮した設計**を行っています。
 
-必要な値:
+---
 
-- `VITE_API_BASE_URL`
-- `VITE_FIREBASE_API_KEY`
-- `VITE_FIREBASE_AUTH_DOMAIN`
-- `VITE_FIREBASE_PROJECT_ID`
-- `VITE_FIREBASE_STORAGE_BUCKET`
-- `VITE_FIREBASE_MESSAGING_SENDER_ID`
-- `VITE_FIREBASE_APP_ID`
-- `VITE_FIREBASE_MEASUREMENT_ID`
+## ☁️ クラウド・インフラ設計
 
-## Backend Env
+### クラウドネイティブ構成
 
-必要な値:
+- Cloud Run を中心としたサーバーレスアーキテクチャ
+- スケーリング・可用性をクラウドに委譲
+- ステートレスなAPI設計
 
-- `DB_URL`
-- `DB_USER`
-- `DB_PASS`
-- `CORS_ALLOWED_ORIGINS`
-- `FIREBASE_PROJECT_ID`
-- `FIREBASE_SERVICE_ACCOUNT_SECRET_NAME`
+---
+
+### コスト最適化
+
+- Cloud SQL の自動停止（Cloud Scheduler + API制御）
+- 環境ごとのコスト戦略（prod / stg / dev 分離）
+- リソース使用率に基づくスペック最適化
+
+---
+
+### セキュリティ設計
+
+- Secret Manager による機密情報管理
+- Firebase Authentication による認証
+- Backend側でのIDトークン検証
+
+---
+
+### 環境分離
+
+- staging / production の完全分離
+- DBユーザー・権限の分離（app / migrate）
+- 環境変数による設定管理
+
+---
+
+## ☕ バックエンド設計（Java / Spring Boot）
+
+### コンテナ前提設計
+
+- Spring Boot アプリを Docker イメージとしてビルド
+- 実行環境の差異を排除（ローカル / 本番の統一）
+
+---
+
+### 責務分離
+
+- Controller / Service / Repository のレイヤー分離
+- DTOによる境界の明確化
+- バリデーションロジックをService層へ委譲
+
+---
+
+### DB設計
+
+- Flyway によるマイグレーション管理
+- Hibernateは `validate` に固定（本番でDDL禁止）
+- 外部キー・正規化を意識した設計
+
+---
+
+### ストレージ設計
+
+- 画像は GCS に保存
+- DBには object_name のみ保持
+- 署名付きURLで安全に配信
+
+---
+
+## 🔐 認証・アーキテクチャ
+
+### 認証分離
+
+- 認証：Firebase Authentication
+- 認可・業務ロジック：Spring Boot
+
+---
 
 ## Firebase Auth
 
 - 認証方式: メール / パスワード
 - フロントは Firebase Auth でサインイン
 - API 呼び出し時は Firebase ID トークンを `Authorization: Bearer <token>` で送信
-- バックエンドは Secret Manager から `firebase-service-account` を読み、Firebase Admin SDK でトークン検証
-- 初回ログイン時に `users` テーブルへ自動作成
+- バックエンドは Secret Manager から値を読み、Firebase Admin SDK でトークン検証
 
-保存するユーザー項目:
+---
 
-- `firebase_uid`
-- `display_name`
-- `email`
-- `photo_url`
+### トークンベース認証
 
-## Local Run
+- Bearer Token を用いたステートレス認証
+- セッション管理を排除
 
-1. `frontend` で依存を入れる
+---
 
-```powershell
-cd frontend
-npm install
-```
+### ユーザー同期
 
-2. `backend` を起動する
+- Firebase UID をキーにDBユーザーを管理
+- 初回ログイン時に自動生成
 
-```powershell
-cd backend
-./gradlew bootRun
-```
+---
 
-3. `frontend` を起動する
+## ⚛️ フロントエンド設計
 
-```powershell
-cd frontend
-npm run dev
-```
+### モダン構成
 
-## Protected Features
+- React + TypeScript + Vite
+- 環境変数によるAPI切り替え
 
-ログイン必須:
+---
 
-- `/posts/new`
-- `/me/dashboard`
-- `/me/profile`
-- 保存
-- フォロー
+### API連携
 
-公開:
+- Firebase認証 → Backend検証のフロー
+- セキュアなトークン連携
 
-- `/`
-- `/feed`
-- `/discover`
-- `/posts/:id`
-- `/users/:id`
+---
 
-## Notes
+## 🚀 デプロイ・運用
 
-- ローカルでも Secret Manager 経由で Firebase Admin 用 secret を読む前提です。
-- Cloud Run では `firebase-service-account` を Secret Manager から渡す構成を想定しています。
-- バックエンド依存を初回解決するには、Gradle のネットワークアクセスが必要です。
+### コンテナデプロイ
+
+- Dockerビルド → Artifact Registry → Cloud Run
+- 環境差異のないデプロイ
+
+---
+
+### 運用設計
+
+- イメージベースの環境展開（stg / prod）
+- ビルドと実行の分離
+
+---
+
+### ログ・トラブルシュート
+
+- Cloud Runログによる障害解析
+- DB接続・Flywayエラー対応経験
+
+---
+
+## 🧠 設計思想
+
+- 責務分離を徹底したアーキテクチャ
+- 開発だけでなく運用まで考慮した設計
